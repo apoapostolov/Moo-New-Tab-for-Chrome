@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="shell" x1="52" y1="42" x2="455" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081B44"/>
+      <stop offset="1" stop-color="#29106B"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="112" y1="110" x2="399" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#35F2F1"/>
+      <stop offset="1" stop-color="#1488FF"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="278" y1="146" x2="420" y2="362" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BD66FF"/>
+      <stop offset="1" stop-color="#6546FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="104" fill="url(#shell)" stroke="url(#cyan)" stroke-width="12"/>
+  <rect x="82" y="92" width="348" height="258" rx="38" stroke="#E9FBFF" stroke-width="18"/>
+  <path d="M211 352h90l24 62H187l24-62Z" fill="url(#cyan)"/>
+  <path d="M161 414h190" stroke="url(#cyan)" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="157" cy="220" r="54" fill="url(#cyan)"/>
+  <circle cx="157" cy="205" r="12" fill="#101344"/>
+  <path d="M132 246c6-18 44-18 50 0" stroke="#101344" stroke-width="11" stroke-linecap="round"/>
+  <path d="M211 201h41c20 0 22-46 44-46" stroke="url(#cyan)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M211 220h85" stroke="url(#cyan)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M211 239h41c20 0 22 46 44 46" stroke="url(#cyan)" stroke-width="12" stroke-linecap="round"/>
+  <rect x="296" y="129" width="94" height="56" rx="17" fill="#F7FCFF" stroke="url(#cyan)" stroke-width="9"/>
+  <rect x="296" y="192" width="94" height="56" rx="17" fill="#F7FCFF" stroke="url(#cyan)" stroke-width="9"/>
+  <rect x="296" y="255" width="94" height="56" rx="17" fill="#F7FCFF" stroke="url(#cyan)" stroke-width="9"/>
+  <path d="M323 151h40M323 214h40M323 277l12 12 25-27" stroke="url(#violet)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m208 254 49 47-21 4 14 22-13 8-14-22-12 18-3-77Z" fill="#fff" stroke="#111747" stroke-width="6" stroke-linejoin="round"/>
+</svg>

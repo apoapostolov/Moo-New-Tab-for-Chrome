@@ -1,0 +1,20 @@
+{
+  "name": "moo-local",
+  "interface": {
+    "displayName": "Computer Use"
+  },
+  "plugins": [
+    {
+      "name": "agent-desktop-mcp",
+      "source": {
+        "source": "local",
+        "path": "./integrations/agent-desktop-mcp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Computer Use"
+    }
+  ]
+}

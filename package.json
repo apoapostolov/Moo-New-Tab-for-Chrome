@@ -25,6 +25,7 @@
     "@fontsource/inter": "^5.2.8",
     "@fontsource/lexend-deca": "5.0.14",
     "blurhash": "^2.0.5",
+    "dompurify": "^3.4.17",
     "fast-blurhash": "^1.1.4",
     "hls.js": "^1.7.3",
     "image-conversion": "^2.1.1",
@@ -71,6 +72,9 @@
     "postinstall": "husky",
     "prepare": "husky",
     "test": "node --test tests/*.test.mjs",
+    "test:memory": "node scripts/test-memory.mjs",
+    "test:memory:unit": "node --test tests/background-memory.test.mjs tests/background-storage-memory.test.mjs tests/memory-transport.test.mjs",
+    "test:memory:soak": "node scripts/test-memory.mjs --cycles 100 --soak-seconds 600",
     "validate:firefox": "node scripts/validateFirefox.cjs"
   }
 }

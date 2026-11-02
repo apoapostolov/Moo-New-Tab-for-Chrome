@@ -22,6 +22,24 @@ function BackgroundVideo({ url, filterStyle, loop, muted, hls, live, maxHeight, 
   const isMuted = muted ?? storedMute;
   const shouldLoop = loop ?? (live ? false : storedLoop);
 
+  // Removing a DOM node alone need not abort its download or release its decoder.
+  // Capture this element: the ref already points at its replacement during cleanup.
+  useEffect(() => {
+    const video = videoRef.current;
+    const source = sourceRef.current;
+    if (!video) return undefined;
+
+    // StrictMode replays effects on the same DOM node after cleaning it up.
+    if (!hls && source) source.src = url;
+
+    return () => {
+      video.pause();
+      video.removeAttribute('src');
+      source?.removeAttribute('src');
+      video.load();
+    };
+  }, [url, hls]);
+
   useEffect(() => {
     if (!hls || !url) return undefined;
 
@@ -41,7 +59,12 @@ function BackgroundVideo({ url, filterStyle, loop, muted, hls, live, maxHeight, 
       player = new Hls({
         // A blob worker would need the extension CSP widened; one stream does not need it.
         enableWorker: false,
+        // Start explicitly after checking visibility. A manifest arriving after
+        // stopLoad() would otherwise restart the default automatic loader.
+        autoStartLoad: false,
         maxBufferLength: 10,
+        maxMaxBufferLength: 15,
+        maxBufferSize: 20 * 1024 * 1024,
         backBufferLength: 5,
         // Webcam channels ship a DEFAULT=YES caption rendition (timestamp,
         // location); subtitles would be drawn over the clock, so both switches
@@ -52,8 +75,9 @@ function BackgroundVideo({ url, filterStyle, loop, muted, hls, live, maxHeight, 
 
       playerRef.current = player;
       player.loadSource(url);
-      if (document.hidden || localStorage.getItem('offlineMode') === 'true') player.stopLoad();
       player.attachMedia(video);
+      if (document.hidden || localStorage.getItem('offlineMode') === 'true') player.stopLoad();
+      else player.startLoad(-1);
 
       // Chosen explicitly: the player measures the element before layout, so
       // letting hls.js pick by element size lands on the 360p level.
@@ -139,18 +163,18 @@ function BackgroundVideo({ url, filterStyle, loop, muted, hls, live, maxHeight, 
     };
   }, [url, live, onFail]);
 
-  // A live stream keeps downloading while the tab is hidden; park it instead.
+  // Park downloads and playback while the background cannot be seen.
   useEffect(() => {
-    if (!live) return undefined;
-
     const onVisibility = () => {
       const video = videoRef.current;
       if (!video) return;
 
       if (document.hidden || localStorage.getItem('offlineMode') === 'true') {
+        video.autoplay = false;
         playerRef.current?.stopLoad();
         video.pause();
       } else {
+        video.autoplay = true;
         playerRef.current?.startLoad(-1);
         video.play().catch(() => {});
       }
@@ -165,7 +189,7 @@ function BackgroundVideo({ url, filterStyle, loop, muted, hls, live, maxHeight, 
       EventBus.off('refresh', onVisibility);
       window.removeEventListener('storage', onVisibility);
     };
-  }, [live]);
+  }, [url, live]);
 
   // An MP4 can carry a subtitle track and `<video>` will show it, so every
   // track is disabled on load and on each new one, whatever the source.

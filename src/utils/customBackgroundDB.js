@@ -83,6 +83,37 @@ export async function getAllBackgrounds() {
   return (await getAllBackgroundsWithMetadata()).map((background) => background.url);
 }
 
+// New tabs need one record. Reading the whole collection also copies every
+// uploaded video's base64 payload into each tab before choosing a background.
+export async function getRandomBackground(random = Math.random) {
+  return transact('readonly', (store, done) => {
+    const count = store.count();
+    count.onsuccess = () => {
+      if (!count.result) {
+        done(null);
+        return;
+      }
+      const index = Math.floor(random() * count.result);
+      const keys = store.openKeyCursor();
+      let advanced = false;
+      keys.onsuccess = () => {
+        const cursor = keys.result;
+        if (!cursor) {
+          done(null);
+          return;
+        }
+        if (index && !advanced) {
+          advanced = true;
+          cursor.advance(index);
+          return;
+        }
+        const request = store.get(cursor.primaryKey);
+        request.onsuccess = () => done(request.result);
+      };
+    };
+  });
+}
+
 export async function addBackground(data) {
   return transact('readwrite', (store, done) => {
     const request = store.add(toRecord(data));

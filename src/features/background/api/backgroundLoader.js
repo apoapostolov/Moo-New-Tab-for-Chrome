@@ -12,7 +12,7 @@ import { fetchPixabayVideo } from './pixabay';
 import { fetchPexelsVideo } from './pexels';
 import { fetchNasaVideo, fetchCommonsVideo } from './publicVideo';
 import { getLiveBackground } from './live';
-import { getAllBackgroundsWithMetadata } from 'utils/customBackgroundDB';
+import { getRandomBackground } from 'utils/customBackgroundDB';
 
 export const backgroundStamp = () =>
   desiredBackgroundSource() +
@@ -399,24 +399,20 @@ const getVideoBackground = (offline, api, fetchVideo) =>
   withLock('moo-background-queue', () => getVideoBackgroundUnlocked(offline, api, fetchVideo));
 
 async function getCustomBackground(isOffline) {
-  let backgrounds;
+  let selected;
   try {
-    backgrounds = await getAllBackgroundsWithMetadata();
+    selected = await getRandomBackground();
   } catch {
     return getOfflineImage('custom');
   }
 
   // Profiles that predate IndexedDB keep bare URLs in localStorage.
-  if (!backgrounds || backgrounds.length === 0) {
+  if (!selected) {
     const urls = parseJSON('customBackground', []);
     if (urls && urls.length > 0) {
-      backgrounds = urls.map((url) => ({ url, photoInfo: { hidden: true } }));
+      selected = { url: urls[Math.floor(Math.random() * urls.length)] };
     }
   }
-
-  if (!backgrounds || backgrounds.length === 0) return null;
-
-  const selected = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 
   if (!selected) return null;
 

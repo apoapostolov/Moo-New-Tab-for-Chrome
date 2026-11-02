@@ -1,0 +1,23 @@
+{
+  "name": "agent-desktop-mcp",
+  "version": "0.2.0",
+  "description": "Use Vercel agent-desktop for scoped local desktop inspection and accessibility-based actions.",
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "Agent Desktop",
+    "shortDescription": "Inspect and operate desktop apps through accessibility",
+    "longDescription": "Use Vercel agent-desktop to inspect screenshots and accessibility trees, operate controls and pointer gestures, manage windows and notifications, use the clipboard, and inspect agent-desktop sessions and traces. Operations stay within a fixed command set.",
+    "developerName": "Personal Tools",
+    "category": "Computer Use",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Inspect the open app and summarize its visible controls.",
+      "Use the accessibility snapshot to click the named control in this window."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

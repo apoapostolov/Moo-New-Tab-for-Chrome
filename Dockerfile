@@ -1,8 +1,12 @@
-FROM oven/bun:latest
+FROM oven/bun:1.3.1
 
 WORKDIR /app
 
-COPY . .
+COPY --chown=bun:bun . .
+
+RUN chown bun:bun /app
+
+USER bun
 
 RUN bun install
 

@@ -1,4 +1,5 @@
 import { createElement, Fragment, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 
 import { eventUrl } from '../eventDetails';
 
@@ -23,36 +24,21 @@ const elements = new Set([
   'h5',
   'h6',
 ]);
-const omitted = new Set([
-  'script',
-  'style',
-  'iframe',
-  'object',
-  'embed',
-  'img',
-  'svg',
-  'math',
-  'link',
-  'meta',
-  'template',
-  'form',
-  'input',
-  'button',
-]);
-
-/** Read inert template nodes into React; source markup and resource elements are never inserted. */
+/** Read a sanitized allowlist of description markup into React elements. */
 export default function EventDescription({ text }) {
   const content = useMemo(() => {
     if (!globalThis.document?.createElement) return text;
-    const template = document.createElement('template');
-    template.innerHTML = String(text || '');
+    const fragment = DOMPurify.sanitize(String(text || ''), {
+      ALLOWED_TAGS: [...elements, 'a', 'b', 'i'],
+      ALLOWED_ATTR: ['href'],
+      RETURN_DOM_FRAGMENT: true,
+    });
     const render = (nodes, path = '') =>
       [...nodes].map((node, index) => {
         const key = `${path}:${index}`;
         if (node.nodeType === 3) return node.textContent;
         if (node.nodeType !== 1) return null;
         const tag = node.tagName.toLowerCase();
-        if (omitted.has(tag)) return null;
         const children = render(node.childNodes, key);
         if (tag === 'a') {
           const href = eventUrl(node.getAttribute('href'));
@@ -68,7 +54,7 @@ export default function EventDescription({ text }) {
         if (!elements.has(safeTag)) return <Fragment key={key}>{children}</Fragment>;
         return createElement(safeTag, { key }, ...(safeTag === 'br' ? [] : children));
       });
-    return render(template.content.childNodes);
+    return render(fragment.childNodes);
   }, [text]);
   return <div className="gwEventDescription">{content}</div>;
 }

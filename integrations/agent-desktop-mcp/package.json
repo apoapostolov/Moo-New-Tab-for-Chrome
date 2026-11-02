@@ -1,0 +1,18 @@
+{
+  "name": "@moo/agent-desktop-mcp",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP tools for Vercel agent-desktop native desktop automation",
+  "bin": {
+    "agent-desktop-mcp": "./server.mjs"
+  },
+  "scripts": {
+    "start": "node ./server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "BSD-3-Clause"
+}
