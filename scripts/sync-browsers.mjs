@@ -87,11 +87,25 @@ if (!differences.length) {
   for (const file of differences) {
     if (!fs.existsSync(path.join(root, file)))
       throw new Error(`Remove ${file} from both repositories explicitly`);
-    const status = execFileSync('git', ['status', '--porcelain', '--', file], {
-      cwd: peer,
-      encoding: 'utf8',
-    });
-    if (status.trim())
+    const gitObject = (args) => {
+      try {
+        return execFileSync('git', args, {
+          cwd: peer,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim();
+      } catch {
+        return null;
+      }
+    };
+    // Hash the contents instead of trusting Git's stat cache: a fast same-size
+    // edit can otherwise appear clean on Windows. Check staged edits as well.
+    const head = gitObject(['rev-parse', '--verify', `HEAD:${file}`]);
+    const index = gitObject(['rev-parse', '--verify', `:${file}`]);
+    const actual = fs.existsSync(path.join(peer, file))
+      ? gitObject(['hash-object', `--path=${file}`, file])
+      : null;
+    if (head !== index || head !== actual)
       throw new Error(`Peer has uncommitted work in ${file}; merge it manually first`);
     const destination = path.resolve(peer, file);
     if (!destination.startsWith(`${peer}${path.sep}`)) throw new Error('Shared path escapes peer');
