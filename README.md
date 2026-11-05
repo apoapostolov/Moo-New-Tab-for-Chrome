@@ -50,6 +50,27 @@ Build from source with the commands below, then install the unpacked Chrome exte
 
 The package is `build/chrome-<version>.zip`. This project has not been published to the Chrome Web Store. Google widgets use a Web application OAuth client with the redirect displayed in Settings → Google; see [Firefox and Chrome development](docs/CROSS-BROWSER.md).
 
+## Developer installation for agents
+
+Use Node 22 and Bun 1.3.1. Clone this repository, install its dependencies and build the extension:
+
+```sh
+git clone https://github.com/apoapostolov/Moo-New-Tab-for-Chrome.git
+cd Moo-New-Tab-for-Chrome
+bun install --frozen-lockfile
+bun run build
+bun run validate:chrome
+```
+
+1. Open Chrome and go to `chrome://extensions`.
+2. Enable **Developer mode**, choose **Load unpacked** and select `build/chrome` from the checkout. This directory contains the generated `manifest.json`.
+3. Open a new tab, confirm Chrome's new-tab change prompt if shown, and verify that Moo loads. Change a harmless setting, then open another new tab to check persistence.
+4. After editing source code, run `bun run build` and `bun run validate:chrome`, choose the **Reload** icon on Moo's extension card, then open a fresh new tab to check the change.
+
+This developer installation requires no Chrome Web Store account or submission. Keep the unpacked directory at the same path so Chrome can continue to load it, and leave Developer mode enabled. To remove it, choose **Remove** on Moo's card. [Chrome's local installation guide](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked).
+
+Agents should use a separate test profile, preserve any existing Moo data and report the browser version, build path, validator result and observed new-tab behavior. Use the installed extension for permission and Google sign-in checks; `bun run dev` provides a web preview for layout work. Never commit account credentials or browser profiles.
+
 ## Development
 
 Use Bun 1.3.1 and Node 22:
