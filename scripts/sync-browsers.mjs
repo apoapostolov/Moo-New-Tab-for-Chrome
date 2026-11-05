@@ -60,6 +60,13 @@ const digest = (directory, file) => {
   if (fs.lstatSync(full).isSymbolicLink())
     throw new Error(`Shared files must not be symlinks: ${file}`);
   let contents = fs.readFileSync(full);
+  // Git may check out LF or CRLF on different hosts. Compare text independently
+  // of that setting while keeping image and other binary assets byte-exact.
+  if (
+    /\.(?:[cm]?js|jsx|tsx?|json|md|scss|css|svg|html|ya?ml|lock|txt)$/.test(file) ||
+    sharedFiles.has(file)
+  )
+    contents = contents.toString('utf8').replace(/\r\n/g, '\n');
   if (file === 'package.json') {
     const pkg = JSON.parse(contents);
     for (const key of ['repository', 'homepage', 'bugs']) delete pkg[key];

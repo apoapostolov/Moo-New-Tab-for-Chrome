@@ -55,6 +55,10 @@ test('parity migration detects drift, preserves browser metadata and refuses con
       encoding: 'utf8',
     });
   assert.equal(run('--check').status, 0);
+  fs.writeFileSync(path.join(source, 'src/widget.js'), 'original\n');
+  fs.writeFileSync(path.join(peer, 'src/widget.js'), 'original\r\n');
+  assert.equal(run('--check').status, 0, 'LF and CRLF checkouts have the same code');
+  fs.writeFileSync(path.join(peer, 'src/widget.js'), 'original');
   fs.writeFileSync(path.join(source, 'src/widget.js'), 'improved');
   assert.equal(run('--check').status, 1);
   assert.equal(run('--apply').status, 0);
