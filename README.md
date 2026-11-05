@@ -2,7 +2,7 @@
   <img src="assets/icon.png" alt="Moo icon" width="96" />
 </p>
 
-<h1 align="center">Moo</h1>
+<h1 align="center">Moo for Chrome</h1>
 
 <p align="center">Check your plans, leave notes and look things up from a new tab.</p>
 
@@ -12,7 +12,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-BSD--3--Clause-555" alt="License: BSD-3-Clause" /></a>
 </p>
 
-Moo is a personal fork of [Mue](https://github.com/mue/mue) for Chrome. It gives you somewhere to check the next appointment, leave a reminder and look something up whenever you open a tab. You choose what stays on the page and where it sits.
+Moo is a customizable new tab page for Chrome. It gives you somewhere to check the next appointment, leave a reminder and look something up whenever you open a tab. You choose what stays on the page and where it sits.
 
 <p align="center">
   <img src="assets/moo-newtab.gif" alt="Moo with an alpine clouds video background, clock, weather, mail, calendar and tasks" width="800" />
@@ -42,13 +42,13 @@ Settings, notes, habit progress and uploaded pictures are stored in your browser
 
 ## Installation
 
-Build from source with the commands below, then install the unpacked Chrome extension:
+Build Moo from source with the developer instructions below, then install it from the files without using the Chrome Web Store:
 
-1. Open `chrome://extensions` and enable Developer mode.
+1. Open `chrome://extensions` and enable **Developer mode**.
 2. Choose **Load unpacked** and select `build/chrome`.
-3. Open a new tab and confirm Chrome's new-tab change prompt if it appears.
+3. Open a new tab and confirm Chrome's new-tab change prompt if shown.
 
-The package is `build/chrome-<version>.zip`. This project has not been published to the Chrome Web Store. Google widgets use a Web application OAuth client with the redirect displayed in Settings → Google; see [Firefox and Chrome development](docs/CROSS-BROWSER.md).
+The build also creates `build/chrome-<version>.zip`. Keep the unpacked directory at the same path for future browser sessions. Google widgets use a Web application OAuth client with the exact redirect displayed in Settings → Google.
 
 ## Developer installation for agents
 
@@ -89,14 +89,12 @@ bun run build
 node scripts/validateChrome.cjs
 ```
 
-The default build writes `build/chrome/` and `build/chrome-<version>.zip`. `bun run build:all` also produces the Firefox package. Load Chrome through `chrome://extensions` with Developer mode enabled; load `build/firefox/manifest.json` temporarily through Firefox's `about:debugging`.
-
-The Firefox project uses the same structure, application code, hero and preview assets. Improvements in either repository must be carried to the other. See [Firefox and Chrome development](docs/CROSS-BROWSER.md) for the parity check, migration command and Chrome Google widgets setup.
+The build writes `build/chrome/` and `build/chrome-<version>.zip`. Load the generated directory through `chrome://extensions` as described above. See [Contributing](CONTRIBUTING.md) for the development workflow and [Memory testing](docs/MEMORY-TESTING.md) for repeatable background stress tests.
 
 [Changelog](CHANGELOG.md) · [Report a bug or request a feature](https://github.com/apoapostolov/Moo-New-Tab-for-Chrome/issues) · [Translation guide](docs/TRANSLATING.md)
 
 ## Credits and licence
 
-Moo builds on [Mue](https://github.com/mue/mue) by The Mue Authors under the [BSD-3-Clause licence](LICENSE). The original copyright notices and attribution are preserved. Moo is a personal fork and is not affiliated with or endorsed by Mue.
+Moo builds on [Mue](https://github.com/mue/mue) by The Mue Authors under the [BSD-3-Clause licence](LICENSE). The original copyright notices and attribution are preserved. Moo is not affiliated with or endorsed by Mue.
 
 Stock images and video come from Unsplash, Pexels, Pixabay, Coverr and Mixkit. The [preview credits](assets/previews/README.md) identify the footage used in the README. Live channels were found through the [iptv-org index](https://github.com/iptv-org/iptv); each stream remains the property of its broadcaster. Illustrations retained from Mue are from [unDraw](https://undraw.co).
