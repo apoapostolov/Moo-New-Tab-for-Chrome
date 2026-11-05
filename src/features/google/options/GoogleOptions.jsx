@@ -96,7 +96,11 @@ const GoogleOptions = () => {
                 {uiText('register_moo_in_google_cloud_a4d4d0')}
               </>
             }
-            subtitle={uiText('google_only_answers_apps_it_knows_about_and_m_283a79')}
+            subtitle={
+              redirectUri.includes('.chromiumapp.org')
+                ? 'In your own Google Cloud project, enable the Gmail, Calendar and Tasks APIs. Create an OAuth client of type Web application and add the redirect URI below to its Authorized redirect URIs.'
+                : uiText('google_only_answers_apps_it_knows_about_and_m_283a79')
+            }
           />
           <Action>
             <a

@@ -50,7 +50,9 @@ Please be respectful and constructive in your interactions with the community.
 
 - `bun run dev` - Start development server with hot reload
 - `bun run dev:host` - Start development server accessible on network
-- `bun run build` - Build production extension for all browsers
+- `bun run build` - Build the repository's default browser extension
+- `bun run build:all` - Build Firefox and Chrome from the same source
+- `bun run parity:check` - Compare shared files with the other browser checkout
 - `bun run lint` - Run ESLint and Stylelint
 - `bun run lint:fix` - Auto-fix linting issues
 - `bun run pretty` - Format code with Prettier
@@ -58,8 +60,8 @@ Please be respectful and constructive in your interactions with the community.
 ### Testing Your Changes
 
 1. Load the extension in your browser:
-   - **Chrome/Edge**: Go to `chrome://extensions`, enable Developer mode, click "Load unpacked", select `dist` folder
-   - **Firefox**: Go to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", select any file in `dist` folder
+   - **Chrome/Edge**: Go to `chrome://extensions`, enable Developer mode, click "Load unpacked", select `build/chrome`
+   - **Firefox**: Go to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", select `build/firefox/manifest.json`
 
 2. Test your changes thoroughly across different browsers
 

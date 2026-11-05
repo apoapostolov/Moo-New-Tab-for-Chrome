@@ -60,12 +60,16 @@
   const api=root.browser||root.chrome;
   if(!api?.runtime?.onMessage||!api?.alarms)return;
   const engine=createCalendarAlerts(api);
-  api.runtime.onMessage.addListener((message,sender)=>{
+  api.runtime.onMessage.addListener((message,sender,sendResponse)=>{
     if(sender.id!==api.runtime.id)return undefined;
-    if(message?.type==='moo-calendar-alert-sync')return engine.sync(message);
-    if(message?.type==='moo-calendar-alert-clear')return engine.clear();
-    if(message?.type==='moo-calendar-alert-remove'&&typeof message.key==='string')return engine.remove(message.key);
-    return undefined;
+    let response;
+    if(message?.type==='moo-calendar-alert-sync')response=engine.sync(message);
+    else if(message?.type==='moo-calendar-alert-clear')response=engine.clear();
+    else if(message?.type==='moo-calendar-alert-remove'&&typeof message.key==='string')response=engine.remove(message.key);
+    else return undefined;
+    // Keep the response channel open on Chrome versions without Promise listeners.
+    response.then(value=>sendResponse(value??null),()=>sendResponse(false));
+    return true;
   });
   api.alarms.onAlarm.addListener(alarm=>engine.fire(alarm).catch(()=>{}));
   api.runtime.onStartup.addListener(()=>engine.restore().catch(()=>{}));

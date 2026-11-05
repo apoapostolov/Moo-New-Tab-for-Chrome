@@ -1,3 +1,4 @@
+import './lib/extensionApi';
 import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 

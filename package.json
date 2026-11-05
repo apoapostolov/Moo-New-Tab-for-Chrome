@@ -2,12 +2,12 @@
   "name": "moo",
   "private": true,
   "author": "Apostol Apostolov (https://github.com/apoapostolov)",
-  "description": "Fast, open and free-to-use new tab page for Firefox.",
+  "description": "Fast, open and free-to-use new tab page for Firefox and Chrome.",
   "repository": {
-    "url": "github:apoapostolov/Moo-New-Tab-for-Firefox"
+    "url": "github:apoapostolov/Moo-New-Tab-for-Chrome"
   },
-  "homepage": "https://github.com/apoapostolov/Moo-New-Tab-for-Firefox#readme",
-  "bugs": "https://github.com/apoapostolov/Moo-New-Tab-for-Firefox/issues",
+  "homepage": "https://github.com/apoapostolov/Moo-New-Tab-for-Chrome#readme",
+  "bugs": "https://github.com/apoapostolov/Moo-New-Tab-for-Chrome/issues",
   "license": "BSD-3-Clause",
   "version": "1.0.0",
   "type": "module",
@@ -66,6 +66,10 @@
     "translations": "cd scripts && node updatetranslations.cjs",
     "translations:percentages": "node scripts/updateTranslationPercentages.cjs",
     "build": "vite build",
+    "build:firefox": "node scripts/build-extensions.mjs firefox",
+    "build:chrome": "node scripts/build-extensions.mjs chrome",
+    "build:all": "node scripts/build-extensions.mjs all",
+    "parity:check": "node scripts/sync-browsers.mjs --check",
     "pretty": "prettier --write \"./**/*.{js,jsx,json,scss,css}\"",
     "lint": "eslint \"./src/**/*.{js,jsx}\" --max-warnings 0 && stylelint \"./src/**/*.{scss,css}\"",
     "lint:fix": "eslint \"./src/**/*.{js,jsx}\" --fix && stylelint \"./src/**/*.{scss,css}\" --fix",
@@ -75,6 +79,7 @@
     "test:memory": "node scripts/test-memory.mjs",
     "test:memory:unit": "node --test tests/background-memory.test.mjs tests/background-storage-memory.test.mjs tests/memory-transport.test.mjs",
     "test:memory:soak": "node scripts/test-memory.mjs --cycles 100 --soak-seconds 600",
-    "validate:firefox": "node scripts/validateFirefox.cjs"
+    "validate:firefox": "node scripts/validateFirefox.cjs",
+    "validate:chrome": "node scripts/validateChrome.cjs"
   }
 }

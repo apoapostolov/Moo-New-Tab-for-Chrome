@@ -1,4 +1,4 @@
-name: Firefox checks
+name: Firefox and Chrome checks
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
@@ -19,10 +19,11 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run test
-      - run: bun run build
+      - run: bun run build:all
       - run: node scripts/validateFirefox.cjs
+      - run: node scripts/validateChrome.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: firefox-unsigned
-          path: build/firefox-*.zip
+          name: moo-extensions
+          path: build/*-*.zip
           if-no-files-found: error

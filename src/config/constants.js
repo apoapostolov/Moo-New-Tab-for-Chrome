@@ -1,4 +1,7 @@
-export const REPO_URL = 'https://github.com/apoapostolov/Moo-New-Tab-for-Firefox';
+import project from '../../moo.config.json';
+
+const target = import.meta.env.VITE_MOO_BROWSER || project.defaultBrowser;
+export const REPO_URL = `https://github.com/apoapostolov/Moo-New-Tab-for-${target === 'chrome' ? 'Chrome' : 'Firefox'}`;
 // Upstream services remain in use for image and weather requests.
 export const API_URL = 'https://api.muetab.com/v2';
 export const SPONSORS_URL = 'https://sponsors.muetab.com';
@@ -19,7 +22,7 @@ export const KNOWLEDGEBASE = `${REPO_URL}#installation`;
 
 // Moo Info
 export const ORG_NAME = 'apoapostolov';
-export const REPO_NAME = 'Moo-New-Tab-for-Firefox';
+export const REPO_NAME = REPO_URL.split('/').pop();
 export const EMAIL = 'theapoapostolov@gmail.com';
 export const TWITTER_HANDLE = 'apomakesmods';
 export const DISCORD_SERVER = 'zv8C9F8';

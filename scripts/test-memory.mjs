@@ -210,11 +210,13 @@ async function memory(label, settled = false) {
 let baseline;
 async function clean() {
   await page('window.memorySuite.clear()');
+  // Let Gecko finish asynchronous media resource selection teardown before
+  // examining detached elements and fixture response state.
+  await sleep(250);
   const snapshot = await page('window.memorySuite.snapshot()');
   const errors = resourceErrors(snapshot, baseline);
   if (errors.length) throw new Error(errors.join('; '));
   // The server must also see all continuous/stalled responses close.
-  await sleep(250);
   if (server.metrics.active > 0)
     throw new Error(`${server.metrics.active} fixture responses remain active after unmount`);
   return snapshot;
@@ -282,11 +284,15 @@ try {
         ...(args.includes('--headed') ? [] : ['--headless']),
         '--no-remote',
         '--marionette',
-        '--remote-allow-system-access',
         '--profile',
         profile,
       ],
-      { windowsHide: true },
+      {
+        windowsHide: true,
+        // Gecko requires this environment variable for Marionette chrome-context
+        // commands. Scope it to the isolated test browser, never the parent runner.
+        env: { ...process.env, MOZ_REMOTE_ALLOW_SYSTEM_ACCESS: '1' },
+      },
     );
     browser.stdout.on('data', (data) => (browserLog += data));
     browser.stderr.on('data', (data) => (browserLog += data));

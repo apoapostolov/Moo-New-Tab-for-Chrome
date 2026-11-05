@@ -15,6 +15,8 @@ npm run test:memory
 
 The browser run uses a fresh profile. Its default workload repeats transitions 30 times and plays each soak fixture for 60 seconds. It writes `output/memory/report.json` and `output/memory/browser.log`.
 
+Zen is started with `MOZ_REMOTE_ALLOW_SYSTEM_ACCESS=1` only in the test process environment. Mozilla requires this for Marionette chrome-context memory reports; it grants the automation client privileged Gecko access, so the runner uses a disposable profile and a loopback-only connection.
+
 ```powershell
 # Visible browser with the normal graphics path
 npm run test:memory -- --headed
@@ -61,8 +63,12 @@ Resident memory sums can count shared pages more than once. Gecko explicit repor
 
 ## Current verification
 
-On 2 November 2026, the deterministic tests pass and the browser harness builds. The local fixtures have verified H.264 dimensions of 1280 × 720, 1920 × 1080 and 3840 × 2160.
+On 3 November 2026, native PowerShell passed all 15 enabled browser scenarios in Zen Twilight 1.25t (Gecko 159.0, build 20261102012134). This was a headless smoke run with one transition cycle and 10 seconds per playback soak. The optional 4K scenario was skipped. The local fixtures have verified H.264 dimensions of 1280 × 720, 1920 × 1080 and 3840 × 2160.
 
-The Zen runner now checks loopback TCP before building media fixtures or launching the browser. In this environment even a Node process connecting to its own `127.0.0.1` listener fails with `EACCES`, so the run stops as `blocked` with zero scenarios and zero memory samples. This is an execution-environment restriction rather than a Zen permission setting. No Zen memory measurements were collected and the reported system-wide crash has not been reproduced or confirmed fixed. An earlier Zen startup attempt also exited with an access violation.
+The warmed baseline was 657.6 MiB resident and 181.5 MiB explicit. Four additional media tabs produced a peak of 1640.7 MiB resident. Final settled memory was 708.0 MiB resident and 179.9 MiB explicit, with explicit growth of -1.67 MiB and a slope of -0.21 MiB per checkpoint. Memory and resource gates passed. This short run did not reproduce the reported sudden exhaustion; it does not establish that the original incident is resolved. Longer runs, headed rendering and the installed extension in the user's profile remain to be verified.
+
+The managed execution shell still rejects loopback connections with `EACCES`, while native PowerShell passes the same probe. Browser measurements must currently be collected from native PowerShell. The launcher supplies `MOZ_REMOTE_ALLOW_SYSTEM_ACCESS=1` to its isolated Zen process so Gecko memory reports are available. The cleanup guard checks retained source attributes and open fixture responses; it does not infer active decoder ownership from a detached element's last `currentSrc` string.
 
 All 26 new tests pass. The initial wider run recorded 218 passes and three timeouts in the existing `three-widgets.test.mjs` tests for concurrent habit confirmation, pending habit writes during a profile change and widget backup round-trips. The final run passes 225 tests with those three tests excluded explicitly through `--test-skip-pattern`. Their underlying failures remain unresolved.
+
+On 5 November 2026, all 233 tests pass under the documented Node 22 runtime, including the three tests previously reported as timing out. The local Node 26.12.1 Web Locks implementation fails to release a lock after a rejected callback, which reproduces the hang independently of Moo. Use Node 22 for the test suite. This result does not add a new sustained browser memory measurement.

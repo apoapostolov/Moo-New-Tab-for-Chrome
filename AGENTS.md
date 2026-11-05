@@ -1,3 +1,15 @@
+# Firefox and Chrome parity
+
+Moo has two full repositories with the same structure: the Firefox checkout (locally `C:/git-public/Moo`, upstream `Moo-New-Tab-for-Firefox`) and `C:/git-public/Moo-New-Tab-for-Chrome`. Read this file in both repositories before changing either extension.
+
+Every improvement, feature, bug fix, security fix, translation, dependency update and applicable documentation or visual asset change made in either project MUST be migrated to the other extension in the same task. Work started in Chrome has the same obligation as work started in Firefox. Do not call a change complete while the counterpart is missing it. If access to the other checkout is unavailable, report the exact files and work still required.
+
+Keep application code, tests, assets, dependencies and packaging code identical. `moo.config.json` selects each repository's default browser; both repositories can build either target. `manifest/firefox.json` is the shared permission catalogue, and `scripts/extension-build.mjs` derives Chrome's service-worker manifest from it. Fix shared behaviour once and carry the same patch to both repositories; do not add separate implementations of widgets or settings for Chrome.
+
+Run `bun run parity:check` from either local checkout, or `node scripts/sync-browsers.mjs <peer-directory> --check` when the peer has another name. Use `--apply` to copy shared changes from the current repository to a clean peer; it refuses to overwrite uncommitted counterpart edits. Resolve those edits manually and migrate deletions explicitly. Review both diffs, run tests and lint, build both targets, and run both package validators. Browser testing must cover the relevant behaviour in both browsers; report any browser or real-account checks you could not perform.
+
+`moo.config.json`, package repository links, README browser badges and installation instructions, CHANGELOG.md, release notes and release publishing workflows may differ for browser-specific facts. Carry applicable capability descriptions and screenshots across both README files, preserve hero and preview credits, and record a concrete API or store restriction for any intentional feature difference. Never publish or move an existing release tag as part of parity work unless the user explicitly authorizes that release operation.
+
 # Moo documentation
 
 Use the product's formal feature names in README and changelog labels, such as Google widgets, Search/Ask Bar, RSS reader, Widget layout and Backups. Explain capability, operation and practical use in plain prose. Avoid promotional lead-ins and bolded benefit claims.

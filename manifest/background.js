@@ -4,7 +4,7 @@ if (typeof browser === 'undefined') {
   var browser = chrome;
 }
 
-browser.runtime.setUninstallURL('https://github.com/apoapostolov/Moo-New-Tab-for-Firefox');
+browser.runtime.setUninstallURL(browser.runtime.getManifest().homepage_url);
 
 browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {

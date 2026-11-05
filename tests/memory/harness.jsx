@@ -189,10 +189,17 @@ window.memorySuite = {
     return {
       players: players.size,
       objectURLs: objectURLs.size,
+      // currentSrc can continue to expose the last selected URL after a
+      // detached element has had its source attributes removed and load() has
+      // reset resource selection. Count retained source ownership here. The
+      // fixture server separately detects requests that remain active.
       retiredVideosWithSource: retained.filter(
         (video) =>
           !video.isConnected &&
-          (video.currentSrc || video.src || video.querySelector('source[src]')),
+          (video.hasAttribute('src') ||
+            Array.from(video.querySelectorAll('source')).some((source) =>
+              source.hasAttribute('src'),
+            )),
       ).length,
       videos: document.querySelectorAll('video').length,
       overlays: document.querySelectorAll('#backgroundOverlay').length,

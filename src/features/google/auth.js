@@ -1,4 +1,5 @@
 import { fetchWithTimeout, withLock } from 'utils/requests';
+import { oauthRedirect } from './oauthRedirect';
 
 // Firefox uses a loopback redirect for the Desktop OAuth client. The secret is sent to Google's token endpoint.
 const revision = () => localStorage.getItem('googleAuthRevision') || '';
@@ -57,15 +58,11 @@ export const getCredentials = () => ({
 });
 
 /**
- * Firefox only accepts a redirect of its own shape, so the loopback form is
- * derived from the add-on id: https://<uuid>.extensions.allizom.org/ becomes
- * http://127.0.0.1/mozoauth2/<uuid>.
+ * Firefox uses the Desktop client's loopback redirect. Chrome uses the HTTPS
+ * redirect from identity.getRedirectURL with a Web application OAuth client.
  */
 export const getRedirectUri = () => {
-  const extensionRedirect = browser.identity.getRedirectURL();
-  const subdomain = new URL(extensionRedirect).hostname.split('.')[0];
-
-  return `http://127.0.0.1/mozoauth2/${subdomain}`;
+  return oauthRedirect(browser.identity.getRedirectURL());
 };
 
 export const getAuth = async () => {
