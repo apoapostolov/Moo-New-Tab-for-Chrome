@@ -1,5 +1,16 @@
 # Moo changelog
 
+## 1.0.1 — Chrome development build, 5 November 2026
+
+### Fixed
+
+- Google widgets: Natural Format moves a time without an explicit date to tomorrow when that time has already passed today. Google Mail now defaults to unread messages in the inbox. Overlapping Google sign-in flows are blocked with a clear message. Changing the Weather type loads its custom controls without breaking settings, and the wind speed switch now follows its selected state.
+- Weather: the Classic surface keeps its rounded corners clean in Chrome.
+
+### Changed
+
+- GitHub remembers the last opened tab, marks newly discovered items with a count, and opens a tab with new items after a refresh. Split middle widget columns stay transparent between cards.
+
 ## 1.0.0 — Chrome development build, 5 November 2026
 
 Moo is a personal fork of [Mue](https://github.com/mue/mue) for Chrome. New profiles and resets open in English with digital time, Search/Ask Bar, basic weather and Unsplash backgrounds. Enable other widgets in Settings. This Chrome development build carries the Firefox features and fixes through 5 November, with a Chrome service worker and OAuth redirect. It has not been published to the Chrome Web Store. Selectable languages have complete key coverage, including machine-assisted translations that still need fluent-speaker review.

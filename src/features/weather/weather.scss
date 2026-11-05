@@ -10,6 +10,8 @@
   transition: 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
   display: flex;
   box-sizing: border-box;
+  isolation: isolate;
+  background-clip: padding-box;
   flex-flow: column;
   animation: fadeIn 1s;
 

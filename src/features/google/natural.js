@@ -410,8 +410,17 @@ export function parseNatural(
     r.issues.push('Choose a repeat count or an end date, rather than both.');
   if (r.repeat?.until && r.date && r.repeat.until < r.date)
     r.issues.push('Choose a repeat end date on or after its start.');
-  if ((r.time || r.allDay) && !r.date)
+  if ((r.time || r.allDay) && !r.date) {
     r.date = midnight(defaultDate ? new Date(`${defaultDate}T00:00:00`) : now);
+    if (
+      !defaultDate &&
+      !r.dateExplicit &&
+      r.time &&
+      (r.time.hours < now.getHours() ||
+        (r.time.hours === now.getHours() && r.time.minutes < now.getMinutes()))
+    )
+      r.date = addDays(r.date, 1);
+  }
   if (r.allDay) {
     r.time = null;
     r.endTime = null;

@@ -75,6 +75,7 @@ body {
   margin: 0;
 
   #widgets {
+      background: transparent;
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -109,6 +110,7 @@ body {
     }
 
     .widgetPair {
+      background: transparent;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 20px;
@@ -119,6 +121,8 @@ body {
     }
 
     .widgetColumn {
+      background: transparent;
+      backdrop-filter: none;
       display: flex;
       min-width: 0;
       flex-direction: column;

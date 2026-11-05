@@ -44,6 +44,8 @@ export const describeError = (error) => {
       return uiText('google_no_code');
     case 'STATE_MISMATCH':
       return uiText('google_state_mismatch');
+    case 'AUTH_FLOW_IN_PROGRESS':
+      return 'A Google sign-in window is already open. Finish or close it before trying again.';
     default:
       return error;
   }

@@ -2,6 +2,23 @@ import { fetchWithTimeout, withLock, online } from 'utils/requests';
 
 export const GITHUB_SETTINGS = /^(github|offlineMode$)/;
 export const VIEWS = ['reviews', 'pulls', 'issues', 'actions'];
+const notificationListeners = new Set();
+const notifyGitHubNotifications = () => notificationListeners.forEach((listener) => listener());
+export function githubNotificationsSnapshot() {
+  try {
+    return localStorage.getItem('githubNewItems') || '{}';
+  } catch {
+    return '{}';
+  }
+}
+export function subscribeGitHubNotifications(listener) {
+  notificationListeners.add(listener);
+  if (typeof window !== 'undefined') window.addEventListener('storage', listener);
+  return () => {
+    notificationListeners.delete(listener);
+    if (typeof window !== 'undefined') window.removeEventListener('storage', listener);
+  };
+}
 export const validLogin = (value) => /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(value);
 export const validRepository = (value) =>
   /^[a-z\d][a-z\d-]*\/[a-z\d_.-]+$/i.test(value) && value.length <= 200 && !value.endsWith('/..');
@@ -309,6 +326,55 @@ function readCache(stamp) {
     return null;
   }
 }
+
+export function githubNewItems(snapshot = githubNotificationsSnapshot()) {
+  try {
+    const value = JSON.parse(snapshot);
+    return Object.fromEntries(
+      VIEWS.map((view) => [
+        view,
+        Array.isArray(value?.[view])
+          ? [...new Set(value[view].filter((id) => typeof id === 'string'))].slice(0, 99)
+          : [],
+      ]),
+    );
+  } catch {
+    return Object.fromEntries(VIEWS.map((view) => [view, []]));
+  }
+}
+
+function recordNewItems(cached, views) {
+  const notifications = githubNewItems();
+  for (const [view, result] of Object.entries(views)) {
+    if (!cached?.views?.[view] || !Array.isArray(result.items)) continue;
+    const previous = new Set(
+      cached.views[view].items.map((item) => `${item.repository}/${item.id}`),
+    );
+    const discovered = result.items
+      .filter((item) => !previous.has(`${item.repository}/${item.id}`))
+      .map((item) => `${item.repository}/${item.id}`);
+    notifications[view] = [...new Set([...discovered, ...notifications[view]])].slice(0, 99);
+  }
+  try {
+    localStorage.setItem('githubNewItems', JSON.stringify(notifications));
+  } catch {
+    /* Keep the fetched results even when notification state cannot be stored. */
+  }
+  notifyGitHubNotifications();
+}
+
+export function markGitHubViewSeen(view) {
+  const notifications = githubNewItems();
+  notifications[view] = [];
+  try {
+    localStorage.setItem('githubNewItems', JSON.stringify(notifications));
+  } catch {
+    /* Reading a view should not depend on storage being available. */
+  }
+  notifyGitHubNotifications();
+  return notifications;
+}
+
 export async function loadGitHub(force = false, signal) {
   const settings = githubSettings();
   const stamp = await identity(settings);
@@ -371,6 +437,7 @@ export async function loadGitHub(force = false, signal) {
         throw errorCode(Object.values(failures)[0], rate);
       if (signal?.aborted || stamp !== (await identity(githubSettings())))
         throw errorCode('changed');
+      recordNewItems(cached, views);
       const data = {
         version: 2,
         identity: stamp,

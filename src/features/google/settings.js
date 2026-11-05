@@ -63,8 +63,8 @@ export const MAIL_CATEGORIES = [
 ];
 
 export const MAIL_QUERIES = [
-  { value: 'is:unread', label: 'Unread only' },
   { value: 'is:unread in:inbox', label: 'Unread in inbox' },
+  { value: 'is:unread', label: 'Unread only' },
   { value: 'in:inbox', label: 'Everything in the inbox' },
   { value: 'is:starred', label: 'Starred' },
   { value: 'is:important', label: 'Important' },
@@ -154,7 +154,9 @@ export const getTasksSettings = () => ({
 });
 
 export const getMailSettings = () => ({
-  query: readText('googleMailCustomQuery', '').trim() || readText('googleMailQuery', 'is:unread'),
+  query:
+    readText('googleMailCustomQuery', '').trim() ||
+    readText('googleMailQuery', 'is:unread in:inbox'),
   categories: readMailCategories(),
   folders: readMailFolders(),
   maxMessages: readNumber('googleMailMax', 6),
@@ -186,7 +188,7 @@ const DEFAULTS = {
   googleTasksDateStyle: 'relative',
   googleTasksMax: '20',
   googleTasksRefresh: '5',
-  googleMailQuery: 'is:unread',
+  googleMailQuery: 'is:unread in:inbox',
   googleMailMax: '6',
   googleMailPrimary: 'sender',
   googleMailSnippet: 'false',

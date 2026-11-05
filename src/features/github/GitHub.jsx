@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { GoGitPullRequest, GoIssueOpened, GoCodeReview, GoPlay } from 'react-icons/go';
 import { useTranslationVersion } from 'contexts/TranslationContext';
 import { uiText } from 'lib/translations';
 import { WidgetShell, EmptyState } from '../widgetKit/WidgetKit';
 import useRemoteWidget from '../widgetKit/useRemoteWidget';
-import { GITHUB_SETTINGS, githubSettings, loadGitHub } from './githubStore';
+import {
+  GITHUB_SETTINGS,
+  githubNewItems,
+  githubNotificationsSnapshot,
+  githubSettings,
+  loadGitHub,
+  markGitHubViewSeen,
+  subscribeGitHubNotifications,
+} from './githubStore';
 import GitHubRow from './GitHubRow';
 import GitHubDetails from './GitHubDetails';
 import useGitHubPreview from './useGitHubPreview';
@@ -21,8 +29,18 @@ export default function GitHub() {
   const { language } = useTranslationVersion();
   const settings = githubSettings();
   const state = useRemoteWidget('github', GITHUB_SETTINGS, loadGitHub, settings.refresh);
-  const [selected, setSelected] = useState(null);
-  const active = settings.views.includes(selected) ? selected : settings.views[0];
+  const [selected, setSelected] = useState(() => localStorage.getItem('githubLastView'));
+  const notificationSnapshot = useSyncExternalStore(
+    subscribeGitHubNotifications,
+    githubNotificationsSnapshot,
+    () => '{}',
+  );
+  const newItems = githubNewItems(notificationSnapshot);
+  const notified = settings.views.find((view) => newItems[view]?.length);
+  const active =
+    (settings.views.includes(notified) && notified) ||
+    (settings.views.includes(selected) && selected) ||
+    settings.views[0];
   const view = state.data?.views[active];
   const preview = useGitHubPreview(`${state.data?.identity || ''}:${active}`);
   const detailItem =
@@ -73,8 +91,12 @@ export default function GitHub() {
                   aria-selected={key === active}
                   aria-controls="github-results"
                   id={`github-tab-${key}`}
-                  onClick={() => setSelected(key)}
-                  aria-label={`${uiText(`github_${key}`)} · ${state.data.views[key]?.total ?? '—'}`}
+                  onClick={() => {
+                    localStorage.setItem('githubLastView', key);
+                    markGitHubViewSeen(key);
+                    setSelected(key);
+                  }}
+                  aria-label={`${uiText(`github_${key}`)} · ${state.data.views[key]?.total ?? '—'}${newItems[key]?.length ? ` · ${newItems[key].length} new` : ''}`}
                   title={uiText(`github_${key}`)}
                   onKeyDown={(event) => {
                     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -108,6 +130,11 @@ export default function GitHub() {
                         }).format(state.data.views[key].total)
                       : '—'}
                   </span>
+                  {newItems[key]?.length > 0 && (
+                    <span className="githubNewCount" aria-hidden="true">
+                      {newItems[key].length > 9 ? '9+' : newItems[key].length}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

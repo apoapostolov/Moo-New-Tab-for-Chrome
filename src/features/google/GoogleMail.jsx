@@ -231,7 +231,7 @@ const GoogleMail = () => {
 
   if (!ready) return null;
 
-  const title = settings.query.trim() || 'is:unread';
+  const title = settings.query.trim() || 'is:unread in:inbox';
 
   return (
     <WidgetCard widget="mail" className="googleWidget">
@@ -262,7 +262,7 @@ const GoogleMail = () => {
         <p className="gwEmpty">
           {!settings.categories.length
             ? 'Every category is switched off in settings.'
-            : title === 'is:unread'
+            : ['is:unread', 'is:unread in:inbox'].includes(title)
               ? 'Inbox is clear.'
               : 'Nothing matches.'}
         </p>

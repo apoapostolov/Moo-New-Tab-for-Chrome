@@ -25,6 +25,21 @@
   font-variant-numeric: tabular-nums;
 }
 
+.githubTabs > button > .githubNewCount {
+  display: inline-grid;
+  flex: 0 0 auto;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 4px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--signature, #ff5c25);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .githubRow {
   display: flex;
   align-items: center;

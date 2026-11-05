@@ -113,7 +113,7 @@ const tokenRequest = async (params) => {
  * Runs the interactive consent flow and stores the resulting tokens.
  * Returns the stored auth record so the caller can show which account connected.
  */
-export const connect = async () => {
+const connectUnlocked = async () => {
   changeRevision();
   const generation = revision();
   const { clientId, clientSecret } = getCredentials();
@@ -184,6 +184,28 @@ export const connect = async () => {
   });
 
   return auth;
+};
+
+let connecting;
+const connectWithLock = () => {
+  if (!globalThis.navigator?.locks) return connectUnlocked();
+
+  return navigator.locks.request(
+    'moo-google-web-auth-flow',
+    { ifAvailable: true },
+    (lock) => {
+      if (!lock) throw new Error('AUTH_FLOW_IN_PROGRESS');
+      return connectUnlocked();
+    },
+  );
+};
+
+export const connect = () => {
+  if (!connecting)
+    connecting = connectWithLock().finally(() => {
+      connecting = null;
+    });
+  return connecting;
 };
 
 const refreshTokens = async (force = false) => {

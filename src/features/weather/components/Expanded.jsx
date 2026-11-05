@@ -52,7 +52,10 @@ function Expanded({ state: { weather, icon }, weatherType, variables }) {
   useTranslationVersion();
   const enabled = useMemo(() => {
     return (setting) => {
-      return (localStorage.getItem(setting) === 'true' && weatherType >= 3) || weatherType === '3';
+      return (
+        (localStorage.getItem(setting) === 'true' && Number(weatherType) >= 3) ||
+        Number(weatherType) === 3
+      );
     };
   }, [weatherType]);
 

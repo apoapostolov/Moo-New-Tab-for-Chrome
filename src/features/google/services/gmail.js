@@ -111,13 +111,13 @@ const searchIds = async (query, maxResults, signal) => {
  */
 export const listMessages = async ({
   signal,
-  query = 'is:unread',
+  query = 'is:unread in:inbox',
   maxResults = 6,
   categories = [],
   categoryIds = [],
   folders = [],
 } = {}) => {
-  const search = query.trim() || 'is:unread';
+  const search = query.trim() || 'is:unread in:inbox';
   const everyCategory = categoryIds.length > 0 && categories.length >= categoryIds.length;
 
   const sources = [
