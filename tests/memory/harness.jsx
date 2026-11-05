@@ -1,3 +1,4 @@
+import '../../src/lib/extensionApi';
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
@@ -54,6 +55,7 @@ window.addEventListener('unhandledrejection', (event) =>
   counters.errors.push(String(event.reason)),
 );
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const mediaOrigin = globalThis.__MOO_MEMORY_ORIGIN__ || location.origin;
 const root = createRoot(document.getElementById('root'));
 let strict = false;
 const onFail = () => counters.failures++;
@@ -110,11 +112,19 @@ window.memorySuite = {
     await sleep(80);
   },
   async video(file = '720.mp4', options = {}) {
-    draw(<BackgroundVideo url={`/media/${file}`} muted loop onFail={onFail} {...options} />);
+    draw(
+      <BackgroundVideo
+        url={`${mediaOrigin}/media/${file}`}
+        muted
+        loop
+        onFail={onFail}
+        {...options}
+      />,
+    );
     await sleep(80);
   },
   async image(index) {
-    draw(<ImageFixture url={`/media/large.jpg?n=${index}`} />);
+    draw(<ImageFixture url={`${mediaOrigin}/media/large.jpg?n=${index}`} />);
     await sleep(100);
   },
   async fullApp() {
@@ -134,7 +144,7 @@ window.memorySuite = {
     localStorage.removeItem('favourite');
     localStorage.setItem('backgroundType', live ? 'api_live' : 'custom');
     localStorage.setItem('backgroundAPI', live ? 'live' : 'unsplash');
-    localStorage.setItem('customBackground', JSON.stringify([`${location.origin}/media/${file}`]));
+    localStorage.setItem('customBackground', JSON.stringify([`${mediaOrigin}/media/${file}`]));
     // Use the same live channel storage path as Settings.
     if (live) {
       const { saveChannels } = await import('../../src/features/background/api/live');
@@ -142,7 +152,7 @@ window.memorySuite = {
         {
           id: 'fixture',
           name: 'Local webcam fixture',
-          url: `${location.origin}/media/${file}`,
+          url: `${mediaOrigin}/media/${file}`,
           maxHeight: 1080,
         },
       ]);
@@ -208,6 +218,8 @@ window.memorySuite = {
         0,
       ),
       bufferedSeconds: buffers.reduce((sum, range) => sum + range.end - range.start, 0),
+      decodedFrames: current?.getVideoPlaybackQuality?.().totalVideoFrames || 0,
+      currentTime: current?.currentTime || 0,
       width: current?.videoWidth || 0,
       height: current?.videoHeight || 0,
       paused: current?.paused ?? true,

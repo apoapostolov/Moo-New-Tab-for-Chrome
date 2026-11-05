@@ -14,7 +14,7 @@ export function slope(values) {
 
 export function assessMemory(
   samples,
-  { maxResidentMiB = 3072, maxGrowthMiB = 96, maxSlopeMiB = 12 } = {},
+  { maxResidentMiB = 3072, maxGrowthMiB = 96, maxSlopeMiB = 12, growthMetric = 'explicit' } = {},
 ) {
   const errors = [];
   if (
@@ -23,12 +23,12 @@ export function assessMemory(
       (sample) =>
         !Number.isFinite(sample.resident) ||
         sample.resident <= 0 ||
-        !Number.isFinite(sample.explicit) ||
-        sample.explicit <= 0,
+        !Number.isFinite(sample[growthMetric]) ||
+        sample[growthMetric] <= 0,
     )
   ) {
     return {
-      errors: ['Missing or invalid Gecko memory measurements'],
+      errors: [`Missing or invalid ${growthMetric} memory measurements`],
       growthMiB: null,
       slopeMiB: null,
       peakResidentMiB: null,
@@ -39,15 +39,19 @@ export function assessMemory(
     errors.push(`Resident memory ${peakResidentMiB.toFixed(1)} MiB exceeds ${maxResidentMiB} MiB`);
   // Compare only equivalent, warmed, post-minimization checkpoints. Active samples
   // record playback peaks but must not be mixed with retired decoder measurements.
-  const settled = samples.filter((sample) => sample.settled).map((sample) => sample.explicit / MiB);
+  const settled = samples
+    .filter((sample) => sample.settled)
+    .map((sample) => sample[growthMetric] / MiB);
   const growthMiB = settled.length > 1 ? settled.at(-1) - settled[0] : 0;
   const slopeMiB = slope(settled);
   if (settled.length < 3) errors.push('At least three settled memory checkpoints are required');
   if (growthMiB > maxGrowthMiB)
-    errors.push(`Settled explicit growth ${growthMiB.toFixed(1)} MiB exceeds ${maxGrowthMiB} MiB`);
+    errors.push(
+      `Settled ${growthMetric} growth ${growthMiB.toFixed(1)} MiB exceeds ${maxGrowthMiB} MiB`,
+    );
   if (slopeMiB > maxSlopeMiB)
     errors.push(
-      `Settled explicit slope ${slopeMiB.toFixed(1)} MiB/checkpoint exceeds ${maxSlopeMiB}`,
+      `Settled ${growthMetric} slope ${slopeMiB.toFixed(1)} MiB/checkpoint exceeds ${maxSlopeMiB}`,
     );
   return { errors, growthMiB, slopeMiB, peakResidentMiB };
 }

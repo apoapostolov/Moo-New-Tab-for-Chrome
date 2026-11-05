@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { access, mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
@@ -8,9 +8,11 @@ import { fileURLToPath } from 'node:url';
 import { build, resolveConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { Marionette } from '../tests/memory/marionette.mjs';
+import { Chromium } from '../tests/memory/chromium.mjs';
+import { extensionManifest } from './extension-build.mjs';
 import { fixtureServer, generateFixtures } from '../tests/memory/fixtures.mjs';
 import { assessMemory, MiB, resourceErrors } from '../tests/memory/metrics.mjs';
-import { systemMemory, headroomError } from '../tests/memory/system-memory.mjs';
+import { monitorSystemMemory, headroomError } from '../tests/memory/system-memory.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 process.env.GOMAXPROCS ||= '2';
@@ -27,7 +29,13 @@ const number = (name, fallback) => {
 };
 const cycles = number('cycles', 30);
 const soakSeconds = number('soak-seconds', 60);
-const output = path.resolve(root, option('output', 'output/memory'));
+const project = JSON.parse(await readFile(path.join(root, 'moo.config.json'), 'utf8'));
+const engine = option('engine', project.defaultBrowser);
+if (!['chrome', 'firefox'].includes(engine)) throw new Error('--engine must be chrome or firefox');
+const output = path.resolve(
+  root,
+  option('output', engine === 'chrome' ? 'output/memory-chrome' : 'output/memory'),
+);
 const outputRoot = path.resolve(root, 'output') + path.sep;
 if (!output.startsWith(outputRoot))
   throw new Error('--output must be a subdirectory of the repository output directory');
@@ -35,10 +43,13 @@ const limits = {
   maxResidentMiB: number('max-resident-mib', 3072),
   maxGrowthMiB: number('max-growth-mib', 96),
   maxSlopeMiB: number('max-slope-mib', 12),
+  growthMetric: engine === 'chrome' ? 'privateBytes' : 'explicit',
 };
 const browserPath = option(
   'browser',
-  process.env.ZEN_BINARY || 'C:/Program Files/Zen Twilight/zen.exe',
+  engine === 'chrome'
+    ? process.env.CHROME_BINARY || 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+    : process.env.ZEN_BINARY || 'C:/Program Files/Zen Twilight/zen.exe',
 );
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const report = {
@@ -46,6 +57,7 @@ const report = {
   status: 'running',
   configuration: {
     browserPath,
+    engine,
     cycles,
     soakSeconds,
     limits,
@@ -57,8 +69,16 @@ const report = {
   limitations: [
     'Isolated profile without user extensions',
     'Synthetic local webcam streams; public provider uptime is outside these tests',
-    'Resident memory includes shared pages counted per process; explicit memory excludes some driver/GPU allocations',
+    'Resident memory counts shared pages per process; dedicated GPU memory is not measured',
+    engine === 'chrome'
+      ? 'Instrumented extension build with production components, extension APIs and CSP; private bytes are Windows process commit, not Gecko explicit memory'
+      : 'Gecko explicit memory excludes some driver allocations; harness runs on a local HTTP origin',
     'Finite stress run cannot prove absence of all leaks',
+    ...(engine === 'chrome' && args.includes('--headed')
+      ? [
+          'Windows native window occlusion is disabled so desktop use cannot pause the soak; real tab visibility remains enabled and is tested',
+        ]
+      : []),
   ],
 };
 await mkdir(output, { recursive: true });
@@ -68,11 +88,12 @@ let driver;
 let browserLog = '';
 let watchdog;
 let safetyFailure;
+let systemMonitor;
 class MemorySafetyStop extends Error {}
 const save = () => writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2));
 
 function checkHeadroom() {
-  const memory = systemMemory();
+  const memory = systemMonitor.read();
   report.systemMemory = memory;
   const error = headroomError(memory);
   if (error) throw new MemorySafetyStop(error);
@@ -111,6 +132,20 @@ async function prepare() {
       },
     },
   });
+  if (engine === 'chrome') {
+    const site = path.join(output, 'site');
+    const manifest = extensionManifest('chrome', root);
+    manifest.host_permissions.push('http://127.0.0.1/*');
+    // Instrument only this disposable package. Keep the production CSP and worker.
+    await writeFile(path.join(site, 'manifest.json'), JSON.stringify(manifest, null, 2));
+    await cp(path.join(site, 'tests/memory/harness.html'), path.join(site, 'index.html'));
+    for (const file of ['background.js', 'calendar-alerts.js', 'service-worker.js'])
+      await cp(path.join(root, 'manifest', file), path.join(site, file));
+    await cp(path.join(root, 'src/assets/icons'), path.join(site, 'icons'), { recursive: true });
+    await cp(path.join(root, 'manifest/_locales'), path.join(site, '_locales'), {
+      recursive: true,
+    });
+  }
   // This separate build never invokes the release packaging plugin or replaces archives.
   console.log('Memory harness built');
 }
@@ -148,7 +183,7 @@ async function verifyLoopback() {
       loopbackError: { code: error.code, message: error.message },
     };
     throw new Error(
-      `Local loopback TCP is unavailable to this process (${error.code || 'unknown'}): ${error.message}. The Zen memory run requires Node to connect to its Marionette port.`,
+      `Local loopback TCP is unavailable to this process (${error.code || 'unknown'}): ${error.message}. The memory run requires local fixture and automation connections.`,
     );
   } finally {
     client?.destroy();
@@ -170,6 +205,18 @@ async function page(expression) {
 async function memory(label, settled = false) {
   if (safetyFailure) throw safetyFailure;
   const system = checkHeadroom();
+  if (engine === 'chrome') {
+    const result = await driver.measure(settled);
+    const sample = { label, settled, time: Date.now(), system, ...result };
+    report.samples.push(sample);
+    console.log(
+      `${label}: resident ${(sample.resident / MiB).toFixed(1)} MiB, private ${(sample.privateBytes / MiB).toFixed(1)} MiB, JS ${(sample.jsHeap / MiB).toFixed(1)} MiB`,
+    );
+    if (sample.resident > limits.maxResidentMiB * MiB)
+      throw new MemorySafetyStop(`Memory ceiling exceeded at ${label}`);
+    await save();
+    return sample;
+  }
   await driver.context('chrome');
   const result = await driver.script(
     `
@@ -210,7 +257,7 @@ async function memory(label, settled = false) {
 let baseline;
 async function clean() {
   await page('window.memorySuite.clear()');
-  // Let Gecko finish asynchronous media resource selection teardown before
+  // Let the browser finish asynchronous media resource selection teardown before
   // examining detached elements and fixture response state.
   await sleep(250);
   const snapshot = await page('window.memorySuite.snapshot()');
@@ -249,6 +296,7 @@ async function scenario(name, action) {
 }
 
 try {
+  systemMonitor = await monitorSystemMemory();
   checkHeadroom();
   if (!args.includes('--build-only')) await verifyLoopback();
   await prepare();
@@ -258,44 +306,110 @@ try {
     checkHeadroom();
     await access(browserPath);
     server = await fixtureServer(path.join(output, 'site'), path.join(output, 'media'));
-    const port = await freePort();
-    const profile = await mkdtemp(path.join(os.tmpdir(), 'moo-memory-'));
-    report.profile = profile;
-    const preferences = {
-      'marionette.port': port,
-      'browser.shell.checkDefaultBrowser': false,
-      'browser.startup.homepage_override.mstone': 'ignore',
-      'browser.startup.page': 0,
-      'browser.sessionstore.resume_from_crash': false,
-      'zen.welcome-screen.seen': true,
-      'media.autoplay.default': 0,
-      'datareporting.policy.dataSubmissionEnabled': false,
-      'toolkit.telemetry.enabled': false,
-    };
-    await writeFile(
-      path.join(profile, 'user.js'),
-      Object.entries(preferences)
-        .map(([key, value]) => `user_pref(${JSON.stringify(key)}, ${JSON.stringify(value)});`)
-        .join('\n'),
-    );
-    browser = spawn(
-      browserPath,
-      [
-        ...(args.includes('--headed') ? [] : ['--headless']),
-        '--no-remote',
-        '--marionette',
-        '--profile',
-        profile,
-      ],
-      {
-        windowsHide: true,
-        // Gecko requires this environment variable for Marionette chrome-context
-        // commands. Scope it to the isolated test browser, never the parent runner.
-        env: { ...process.env, MOZ_REMOTE_ALLOW_SYSTEM_ACCESS: '1' },
-      },
-    );
-    browser.stdout.on('data', (data) => (browserLog += data));
-    browser.stderr.on('data', (data) => (browserLog += data));
+    if (engine === 'chrome') {
+      const profile = await mkdtemp(path.join(os.tmpdir(), 'moo-chrome-memory-'));
+      report.profile = profile;
+      browser = spawn(
+        browserPath,
+        [
+          `--user-data-dir=${profile}`,
+          '--remote-debugging-pipe',
+          '--enable-unsafe-extension-debugging',
+          '--no-first-run',
+          '--no-default-browser-check',
+          '--disable-background-networking',
+          '--autoplay-policy=no-user-gesture-required',
+          ...(args.includes('--headed')
+            ? [
+                '--disable-backgrounding-occluded-windows',
+                '--disable-features=CalculateNativeWinOcclusion',
+              ]
+            : []),
+          ...(args.includes('--headed') ? [] : ['--headless=new']),
+          'about:blank',
+        ],
+        { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'] },
+      );
+      browser.stdout.on('data', (data) => (browserLog += data));
+      browser.stderr.on('data', (data) => (browserLog += data));
+      driver = new Chromium(browser, server.origin);
+      browser.on('error', (error) => driver.close(error));
+      report.browser = await driver.start(path.join(output, 'site'));
+      report.gpu = await driver.send('SystemInfo.getInfo');
+      report.extension = { id: driver.extensionId, origin: driver.origin, instrumented: true };
+    } else {
+      const port = await freePort();
+      const profile = await mkdtemp(path.join(os.tmpdir(), 'moo-memory-'));
+      report.profile = profile;
+      const preferences = {
+        'marionette.port': port,
+        'browser.shell.checkDefaultBrowser': false,
+        'browser.startup.homepage_override.mstone': 'ignore',
+        'browser.startup.page': 0,
+        'browser.sessionstore.resume_from_crash': false,
+        'zen.welcome-screen.seen': true,
+        'media.autoplay.default': 0,
+        'datareporting.policy.dataSubmissionEnabled': false,
+        'toolkit.telemetry.enabled': false,
+      };
+      await writeFile(
+        path.join(profile, 'user.js'),
+        Object.entries(preferences)
+          .map(([key, value]) => `user_pref(${JSON.stringify(key)}, ${JSON.stringify(value)});`)
+          .join('\n'),
+      );
+      browser = spawn(
+        browserPath,
+        [
+          ...(args.includes('--headed') ? [] : ['--headless']),
+          '--no-remote',
+          '--marionette',
+          '--profile',
+          profile,
+        ],
+        {
+          windowsHide: true,
+          // Gecko requires this environment variable for Marionette chrome-context
+          // commands. Scope it to the isolated test browser, never the parent runner.
+          env: { ...process.env, MOZ_REMOTE_ALLOW_SYSTEM_ACCESS: '1' },
+        },
+      );
+      browser.stdout.on('data', (data) => (browserLog += data));
+      browser.stderr.on('data', (data) => (browserLog += data));
+      let launchError;
+      browser.on('error', (error) => (launchError = error));
+      let lastError;
+      for (let attempt = 0; attempt < 80; attempt++) {
+        if (launchError) throw launchError;
+        if (browser.exitCode !== null)
+          throw new Error(
+            `Zen exited during startup: ${browser.exitCode}. ${browserLog.slice(-1500)}`,
+          );
+        driver = new Marionette();
+        try {
+          await driver.connect(port);
+          lastError = null;
+          break;
+        } catch (error) {
+          lastError = error;
+          driver.close();
+          if (error.code === 'EACCES')
+            throw new Error(
+              `Automation transport blocked by the execution environment: ${error.message}`,
+            );
+          await sleep(250);
+        }
+      }
+      if (lastError) throw lastError;
+      report.session = await driver.command('WebDriver:NewSession', {
+        capabilities: { alwaysMatch: { acceptInsecureCerts: false } },
+      });
+      await driver.context('chrome');
+      report.browser = await driver.script(
+        'return {name:Services.appinfo.name, version:Services.appinfo.version, buildID:Services.appinfo.appBuildID, platformVersion:Services.appinfo.platformVersion};',
+      );
+      await driver.context('content');
+    }
     watchdog = setInterval(() => {
       try {
         checkHeadroom();
@@ -306,39 +420,6 @@ try {
         clearInterval(watchdog);
       }
     }, 1000);
-    let launchError;
-    browser.on('error', (error) => (launchError = error));
-    let lastError;
-    for (let attempt = 0; attempt < 80; attempt++) {
-      if (launchError) throw launchError;
-      if (browser.exitCode !== null)
-        throw new Error(
-          `Zen exited during startup: ${browser.exitCode}. ${browserLog.slice(-1500)}`,
-        );
-      driver = new Marionette();
-      try {
-        await driver.connect(port);
-        lastError = null;
-        break;
-      } catch (error) {
-        lastError = error;
-        driver.close();
-        if (error.code === 'EACCES')
-          throw new Error(
-            `Automation transport blocked by the execution environment: ${error.message}`,
-          );
-        await sleep(250);
-      }
-    }
-    if (lastError) throw lastError;
-    report.session = await driver.command('WebDriver:NewSession', {
-      capabilities: { alwaysMatch: { acceptInsecureCerts: false } },
-    });
-    await driver.context('chrome');
-    report.browser = await driver.script(
-      'return {name:Services.appinfo.name, version:Services.appinfo.version, buildID:Services.appinfo.appBuildID, platformVersion:Services.appinfo.platformVersion};',
-    );
-    await driver.context('content');
     await driver.command('WebDriver:Navigate', { url: server.origin });
     for (let i = 0; i < 150 && !(await page('Boolean(window.memorySuite)')); i++) await sleep(100);
     if (!(await page('Boolean(window.memorySuite)')))
@@ -351,7 +432,13 @@ try {
       throw new Error(`App warm-up failed: ${baseline.errors.join('; ')}`);
     report.baselineResources = baseline;
     await scenario('warm-up MP4 and HLS decoders', async () => {
-      for (const file of ['720.mp4', 'live.m3u8']) {
+      const files = [
+        '720.mp4',
+        '1080.mp4',
+        ...(args.includes('--include-4k') ? ['2160.mp4'] : []),
+        'live.m3u8',
+      ];
+      for (const file of files) {
         await page(
           `window.memorySuite.video(${JSON.stringify(file)}, ${file.endsWith('m3u8') ? '{hls:true,live:true}' : '{}'})`,
         );
@@ -463,7 +550,7 @@ try {
         await page('window.memorySuite.playing()');
       }
     });
-    await scenario('hidden webcam tab stops downloads and resumes', async () => {
+    await scenario('hidden webcam tab stops downloads and resumes', async (result) => {
       await page("window.memorySuite.video('live.m3u8',{hls:true,live:true})");
       await page('window.memorySuite.playing()');
       const original = (await driver.command('WebDriver:GetWindowHandle')).value;
@@ -472,6 +559,18 @@ try {
       try {
         await driver.command('WebDriver:SwitchToWindow', { handle });
         await sleep(500);
+        if (engine === 'chrome') {
+          result.hiddenSnapshot = await driver.script(
+            'return window.memorySuite.snapshot()',
+            [],
+            false,
+            original,
+          );
+          if (!result.hiddenSnapshot.hidden || !result.hiddenSnapshot.paused)
+            throw new Error(
+              `Original webcam tab did not hide and pause: ${JSON.stringify(result.hiddenSnapshot)}`,
+            );
+        }
         const before = server.metrics.requests;
         await sleep(4000);
         if (server.metrics.requests !== before)
@@ -538,7 +637,12 @@ try {
         while (Date.now() < deadline) {
           await sleep(Math.min(5000, deadline - Date.now()));
           const snapshot = await page('window.memorySuite.snapshot()');
+          const previous = result.playback.at(-1);
           result.playback.push(snapshot);
+          if (!snapshot.videos || snapshot.paused || snapshot.height === 0)
+            throw new Error('Playback stopped during the soak');
+          if (previous && snapshot.decodedFrames <= previous.decodedFrames)
+            throw new Error('Decoded frames stopped advancing during the soak');
           if (snapshot.bufferedSeconds > 45 && options !== '{}')
             throw new Error(`HLS buffer grew to ${snapshot.bufferedSeconds}s`);
           await memory(name);
@@ -560,6 +664,7 @@ try {
   console.error(report.error);
 } finally {
   clearInterval(watchdog);
+  systemMonitor?.close();
   if (driver?.socket && !driver.socket.destroyed) {
     try {
       await driver.command('Marionette:Quit', { flags: ['eForceQuit'] });

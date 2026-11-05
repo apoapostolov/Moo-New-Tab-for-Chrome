@@ -77,7 +77,9 @@
     "prepare": "husky",
     "test": "node --test tests/*.test.mjs",
     "test:memory": "node scripts/test-memory.mjs",
-    "test:memory:unit": "node --test tests/background-memory.test.mjs tests/background-storage-memory.test.mjs tests/memory-transport.test.mjs",
+    "test:memory:chrome": "node scripts/test-memory.mjs --engine chrome",
+    "test:memory:chrome:soak": "node scripts/test-memory.mjs --engine chrome --cycles 100 --soak-seconds 600",
+    "test:memory:unit": "node --test tests/background-memory.test.mjs tests/background-storage-memory.test.mjs tests/memory-transport.test.mjs tests/chromium-memory-transport.test.mjs",
     "test:memory:soak": "node scripts/test-memory.mjs --cycles 100 --soak-seconds 600",
     "validate:firefox": "node scripts/validateFirefox.cjs",
     "validate:chrome": "node scripts/validateChrome.cjs"
