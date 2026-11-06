@@ -125,7 +125,8 @@ const APISettings = ({ backgroundAPI, backgroundCategories, unsplashTopics }) =>
           subtitle={variables.getMessage(`${base}.subtitle`)}
         />
         <Action>
-          {mixkit === 'missing' && (
+          {/* Keep the grant action available if Chrome cannot read the permission state. */}
+          {mixkit !== 'granted' && (
             <button className="apiAllowButton" type="button" onClick={allowMixkit}>
               {variables.getMessage(`${base}.allow`)}
             </button>
