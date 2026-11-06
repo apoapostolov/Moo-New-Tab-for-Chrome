@@ -2,6 +2,15 @@ import { fetchWithTimeout, withLock, online } from 'utils/requests';
 
 export const GITHUB_SETTINGS = /^(github|offlineMode$)/;
 export const VIEWS = ['reviews', 'pulls', 'issues', 'actions'];
+const GITHUB_TITLE_DESTINATIONS = [
+  'home',
+  'notifications',
+  'pulls',
+  'issues',
+  'explore',
+  'profile',
+  'repositories',
+];
 const notificationListeners = new Set();
 const notifyGitHubNotifications = () => notificationListeners.forEach((listener) => listener());
 export function githubNotificationsSnapshot() {
@@ -70,6 +79,33 @@ export function githubSettings() {
         localStorage.getItem(`githubShow${view[0].toUpperCase()}${view.slice(1)}`) !== 'false',
     ),
   };
+}
+
+export function githubTitleUrl(username = '') {
+  const destination = GITHUB_TITLE_DESTINATIONS.includes(
+    localStorage.getItem('githubTitleDestination'),
+  )
+    ? localStorage.getItem('githubTitleDestination')
+    : 'home';
+  const login = validLogin(username) ? username : '';
+
+  switch (destination) {
+    case 'notifications':
+      return 'https://github.com/notifications';
+    case 'pulls':
+      return 'https://github.com/pulls';
+    case 'issues':
+      return 'https://github.com/issues';
+    case 'explore':
+      return 'https://github.com/explore';
+    case 'profile':
+      return login ? `https://github.com/${login}` : 'https://github.com/';
+    case 'repositories':
+      return login ? `https://github.com/${login}?tab=repositories` : 'https://github.com/';
+    case 'home':
+    default:
+      return 'https://github.com/';
+  }
 }
 async function identity(settings) {
   const hash = settings.token

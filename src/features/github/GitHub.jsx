@@ -9,6 +9,7 @@ import {
   githubNewItems,
   githubNotificationsSnapshot,
   githubSettings,
+  githubTitleUrl,
   loadGitHub,
   markGitHubViewSeen,
   subscribeGitHubNotifications,
@@ -61,7 +62,7 @@ export default function GitHub() {
       <WidgetShell
         widget="github"
         title="GitHub"
-        titleHref="https://github.com/"
+        titleHref={() => githubTitleUrl(settings.username || state.data?.username)}
         loading={state.loading}
         onRefresh={state.refresh}
         error={errorText}

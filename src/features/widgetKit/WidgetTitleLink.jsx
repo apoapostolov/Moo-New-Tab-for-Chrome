@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import EventBus from 'utils/eventbus';
+import './widgetKit.scss';
 
 const readTarget = () =>
   localStorage.getItem('widgetTitleLinkTarget') === '_self' ? '_self' : '_blank';
@@ -11,7 +12,14 @@ export function WidgetTitleLink({ href, children, className = '' }) {
 
   useEffect(() => {
     const refreshTarget = (category) => {
-      if (!category || category === 'other' || category === 'widgetTitle' || category === 'rss') {
+      if (
+        !category ||
+        category === 'other' ||
+        category === 'widgetTitle' ||
+        category === 'rss' ||
+        category === 'bookmarks' ||
+        category === 'github'
+      ) {
         setTarget(readTarget());
         setResolvedHref(resolveHref(href));
       }
@@ -35,6 +43,10 @@ export function WidgetTitleLink({ href, children, className = '' }) {
   useEffect(() => {
     setResolvedHref(resolveHref(href));
   }, [href]);
+
+  if (!resolvedHref) {
+    return <span className={`gwTitleLink ${className}`.trim()}>{children}</span>;
+  }
 
   return (
     <a

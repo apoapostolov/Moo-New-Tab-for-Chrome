@@ -134,6 +134,27 @@ export default function BookmarkOptions() {
             { value: '_blank', text: uiText('bookmarks_new_tab') },
           ]}
         />
+        <OptionSelect
+          category="bookmarks"
+          name="bookmarksTitleDestination"
+          title="Open Bookmarks title"
+          items={[
+            { value: 'browser', text: uiText('bookmarks_browser') },
+            { value: 'raindrop', text: 'Raindrop' },
+            { value: 'readwise', text: 'Readwise Reader' },
+            { value: 'custom', text: 'Other service' },
+          ]}
+        />
+        {settings.titleDestination === 'custom' && (
+          <OptionInput
+            category="bookmarks"
+            name="bookmarksTitleServiceUrl"
+            title="Other service URL"
+            hint="Leave empty to keep the Bookmarks title unlinked."
+            maxLength={2048}
+            placeholder="https://example.com/bookmarks"
+          />
+        )}
       </Group>
       <BrowserBookmarkOptions />
       <Group>

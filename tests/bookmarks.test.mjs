@@ -44,6 +44,33 @@ beforeEach(async () => {
   globalThis.fetch = originalFetch;
   await cache.clearBookmarkCache();
 });
+test('Bookmarks title destinations open supported services and validate custom addresses', () => {
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'browser' }, 'Firefox/144.0'),
+    'about:bookmarks',
+  );
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'browser' }, 'Chrome/140.0'),
+    'chrome://bookmarks/',
+  );
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'raindrop' }),
+    'https://app.raindrop.io/',
+  );
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'readwise' }),
+    'https://read.readwise.io/',
+  );
+  assert.equal(store.bookmarkTitleUrl({ titleDestination: 'custom', titleServiceUrl: '' }), '');
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'custom', titleServiceUrl: 'reader.example/' }),
+    'https://reader.example/',
+  );
+  assert.equal(
+    store.bookmarkTitleUrl({ titleDestination: 'custom', titleServiceUrl: 'javascript:alert(1)' }),
+    '',
+  );
+});
 after(async () => {
   globalThis.fetch = originalFetch;
   await server.close();

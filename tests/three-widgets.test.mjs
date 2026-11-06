@@ -517,6 +517,22 @@ test('GitHub search separates issue and PR filters, scope and draft choices', ()
   assert.equal(github.githubLink('https://user:pass@github.com/a/b'), null);
   assert.equal(github.validRepository('owner/../evil'), false);
 });
+test('GitHub title destinations cover key pages and account repositories', () => {
+  assert.equal(github.githubTitleUrl('octocat'), 'https://github.com/');
+  for (const [destination, url] of [
+    ['notifications', 'https://github.com/notifications'],
+    ['pulls', 'https://github.com/pulls'],
+    ['issues', 'https://github.com/issues'],
+    ['explore', 'https://github.com/explore'],
+    ['profile', 'https://github.com/octocat'],
+    ['repositories', 'https://github.com/octocat?tab=repositories'],
+  ]) {
+    localStorage.setItem('githubTitleDestination', destination);
+    assert.equal(github.githubTitleUrl('octocat'), url);
+  }
+  localStorage.setItem('githubTitleDestination', 'repositories');
+  assert.equal(github.githubTitleUrl(''), 'https://github.com/');
+});
 test('GitHub public mode caches minimal safe rows and token identities never contain the credential', async () => {
   githubAccount({ githubToken: 'test-private-token' });
   let count = 0;

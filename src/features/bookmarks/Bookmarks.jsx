@@ -11,7 +11,12 @@ import EventBus from 'utils/eventbus';
 import { WidgetShell, EmptyState, IconButton } from '../widgetKit/WidgetKit';
 import useRemoteWidget from '../widgetKit/useRemoteWidget';
 import useItemPreview from '../widgetKit/useItemPreview';
-import { BOOKMARK_SETTINGS, bookmarkSettings, loadBookmarks } from './bookmarkStore';
+import {
+  BOOKMARK_SETTINGS,
+  bookmarkSettings,
+  bookmarkTitleUrl,
+  loadBookmarks,
+} from './bookmarkStore';
 import { bookmarkPool, bookmarkRotation, SOURCES } from './bookmarkSelection';
 import { recordBookmarkOpen } from './bookmarkOpens';
 import { subscribeBrowserBookmarks } from './browserBookmarks';
@@ -133,6 +138,7 @@ export default function Bookmarks() {
       <WidgetShell
         widget="bookmarks"
         title={uiText('bookmarks_title')}
+        titleHref={() => bookmarkTitleUrl(settings)}
         className="bookmarksWidget"
         showSettings={false}
         loading={state.loading}

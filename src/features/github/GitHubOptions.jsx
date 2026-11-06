@@ -12,6 +12,20 @@ export default function GitHubOptions() {
       <Header title="GitHub" setting="githubEnabled" category="widgets" visibilityToggle />
       <Group>
         <WidgetSurface setting="surfaceGithub" category="github" />
+        <OptionSelect
+          category="github"
+          name="githubTitleDestination"
+          title="Open GitHub title"
+          items={[
+            { value: 'home', text: 'Homepage' },
+            { value: 'notifications', text: 'Notifications' },
+            { value: 'pulls', text: uiText('github_pulls') },
+            { value: 'issues', text: uiText('github_issues') },
+            { value: 'explore', text: 'Explore' },
+            { value: 'profile', text: 'Your profile' },
+            { value: 'repositories', text: uiText('github_repositories') },
+          ]}
+        />
         <OptionInput
           category="github"
           name="githubUsername"

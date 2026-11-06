@@ -5,6 +5,7 @@ import { MODES, SOURCES, safeBookmarkUrl } from './bookmarkSelection';
 import { readBrowserBookmarks } from './browserBookmarks';
 
 export const BOOKMARK_SETTINGS = /^(bookmarks|surfaceBookmarks$|offlineMode$)/;
+const BOOKMARK_TITLE_DESTINATIONS = ['browser', 'raindrop', 'readwise', 'custom'];
 const choice = (key, values, fallback) =>
   values.includes(localStorage.getItem(key)) ? localStorage.getItem(key) : fallback;
 const number = (key, fallback, max) =>
@@ -24,6 +25,8 @@ export function bookmarkSettings() {
     thumbnails: localStorage.getItem('bookmarksThumbnails') !== 'false',
     openReader: localStorage.getItem('bookmarksOpenReader') !== 'false',
     linkTarget: choice('bookmarksLinkTarget', ['_self', '_blank'], '_self'),
+    titleDestination: choice('bookmarksTitleDestination', BOOKMARK_TITLE_DESTINATIONS, 'browser'),
+    titleServiceUrl: (localStorage.getItem('bookmarksTitleServiceUrl') || '').trim().slice(0, 2048),
     sources: {
       browser: {
         enabled: localStorage.getItem('bookmarksBrowserEnabled') !== 'false',
@@ -58,6 +61,27 @@ export function bookmarkSettings() {
       },
     },
   };
+}
+
+export function bookmarkTitleUrl(
+  settings = bookmarkSettings(),
+  userAgent = globalThis.navigator?.userAgent || '',
+) {
+  switch (settings.titleDestination) {
+    case 'raindrop':
+      return 'https://app.raindrop.io/';
+    case 'readwise':
+      return 'https://read.readwise.io/';
+    case 'custom': {
+      const address = settings.titleServiceUrl.trim();
+      if (!address) return '';
+      const withProtocol = /^[a-z][a-z\d+.-]*:\/\//i.test(address) ? address : `https://${address}`;
+      return safeBookmarkUrl(withProtocol);
+    }
+    case 'browser':
+    default:
+      return /Firefox\//i.test(userAgent) ? 'about:bookmarks' : 'chrome://bookmarks/';
+  }
 }
 
 export async function bookmarkIdentity(value) {

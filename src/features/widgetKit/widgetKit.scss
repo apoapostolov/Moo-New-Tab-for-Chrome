@@ -22,10 +22,6 @@
   color: inherit;
   text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
-  }
-
   &:focus-visible {
     outline: 2px solid currentcolor;
     outline-offset: 2px;
