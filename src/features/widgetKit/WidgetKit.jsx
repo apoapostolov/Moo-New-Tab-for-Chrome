@@ -11,6 +11,9 @@ import 'features/google/google.scss';
 import 'scss/features.scss';
 import 'components/Form/Settings/Text/Text.scss';
 import './widgetKit.scss';
+import { WidgetTitleLink } from './WidgetTitleLink';
+
+export { WidgetTitleLink } from './WidgetTitleLink';
 
 export const openWidgetSettings = (widget) => {
   updateHash(`#settings/${widget}`);
@@ -42,6 +45,7 @@ export function WidgetShell({
   updated,
   className = '',
   showSettings = true,
+  titleHref,
 }) {
   const { language } = useTranslationVersion();
   return (
@@ -53,7 +57,9 @@ export function WidgetShell({
       aria-busy={loading || undefined}
     >
       <header className="gwHead">
-        <span className="gwLabel">{title}</span>
+        <span className="gwLabel">
+          {titleHref ? <WidgetTitleLink href={titleHref}>{title}</WidgetTitleLink> : title}
+        </span>
         {actions}
         {onRefresh && (
           <IconButton label={uiText('widget_refresh')} onClick={onRefresh} disabled={loading}>

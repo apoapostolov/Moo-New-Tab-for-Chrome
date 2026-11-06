@@ -3,6 +3,7 @@ import { useTranslationVersion } from 'contexts/TranslationContext';
 import variables from 'config/variables';
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { MdSource, MdOutlineAutoAwesome } from 'react-icons/md';
+import Modal from 'react-modal';
 import EventBus from 'utils/eventbus';
 
 import { Header } from 'components/Layout/Settings';
@@ -12,10 +13,12 @@ import FallbackOptions from './FallbackOptions';
 import ColourSettings from './Colour';
 import CustomSettings from './Custom';
 import APISettings from './sections/APISettings';
+import MixkitPermissionModal from './MixkitPermissionModal';
 import DisplaySettings from './sections/DisplaySettings';
 import EffectsSettings from './sections/EffectsSettings';
 import SourceSection from './sections/SourceSection';
 import NavigationCard from './sections/NavigationCard';
+import { grantMixkit, mixkitAccess } from '../api/mixkit';
 
 import {
   getBackgroundOptionItems,
@@ -47,8 +50,15 @@ const BackgroundOptions = memo(({ currentSubSection, onSubSectionChange, section
   ]);
   const [unsplashTopics, setUnsplashTopics] = useState(null);
   const [marketplaceEnabled] = useState(localStorage.getItem('photo_packs'));
+  const [mixkitPermissionModal, setMixkitPermissionModal] = useState(false);
 
   const controllerRef = useRef(null);
+  const mixkitPromptCheckRef = useRef(0);
+  const subSectionRef = useRef(currentSubSection);
+
+  useEffect(() => {
+    subSectionRef.current = currentSubSection;
+  }, [currentSubSection]);
 
   // A new source invalidates the queue prefetched for the previous API.
   useEffect(() => {
@@ -119,19 +129,41 @@ const BackgroundOptions = memo(({ currentSubSection, onSubSectionChange, section
     };
   }, [getBackgroundCategories, getUnsplashTopics]);
 
-  const handleTypeChange = useCallback((value) => {
-    localStorage.removeItem('imageQueue');
-    setBackgroundType(value);
+  const handleTypeChange = useCallback(
+    (value) => {
+      const requestId = ++mixkitPromptCheckRef.current;
+      localStorage.removeItem('imageQueue');
+      setBackgroundType(value);
 
-    if (isApiBackgroundType(value)) {
-      localStorage.setItem('nextImage', null);
-      localStorage.setItem('backgroundAPI', getApiForBackgroundType(value));
-    }
+      if (isApiBackgroundType(value)) {
+        localStorage.setItem('nextImage', null);
+        localStorage.setItem('backgroundAPI', getApiForBackgroundType(value));
+      }
 
-    if (value === 'custom') {
-      EventBus.emit('refresh', 'background');
-    }
-  }, []);
+      if (value === 'custom') {
+        EventBus.emit('refresh', 'background');
+      }
+
+      // The provider settings page has its own inline permission action. The main
+      // Background settings selector needs a popup because that action is not visible there.
+      if (value === 'api_mixkit' && !currentSubSection) {
+        mixkitAccess().then((access) => {
+          if (
+            requestId === mixkitPromptCheckRef.current &&
+            !subSectionRef.current &&
+            access !== 'granted'
+          ) {
+            setMixkitPermissionModal(true);
+          }
+        });
+      }
+    },
+    [currentSubSection],
+  );
+
+  const allowMixkitFromModal = async () => {
+    if (await grantMixkit()) setMixkitPermissionModal(false);
+  };
 
   const handleFallbackChange = (value) => {
     localStorage.removeItem('imageQueue');
@@ -296,6 +328,20 @@ const BackgroundOptions = memo(({ currentSubSection, onSubSectionChange, section
           {getBackgroundSettings(fallbackType, true)}
         </>
       )}
+
+      <Modal
+        closeTimeoutMS={100}
+        onRequestClose={() => setMixkitPermissionModal(false)}
+        isOpen={mixkitPermissionModal}
+        className="Modal resetmodal mainModal"
+        overlayClassName="Overlay resetoverlay"
+        ariaHideApp={true}
+      >
+        <MixkitPermissionModal
+          onAllow={allowMixkitFromModal}
+          onClose={() => setMixkitPermissionModal(false)}
+        />
+      </Modal>
     </>
   );
 });

@@ -283,7 +283,7 @@
             },
             "mixkit": {
               "title": "Mixkit",
-              "subtitle": "Video clips without an account or key. Firefox asks for permission to load them from Mixkit.",
+              "subtitle": "Allow access to Mixkit to load its video backgrounds.",
               "search": "Search",
               "search_subtitle": "Leave empty for any clip, or narrow it to a subject.",
               "allow": "Allow"

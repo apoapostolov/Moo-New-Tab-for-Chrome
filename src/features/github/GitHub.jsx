@@ -61,6 +61,7 @@ export default function GitHub() {
       <WidgetShell
         widget="github"
         title="GitHub"
+        titleHref="https://github.com/"
         loading={state.loading}
         onRefresh={state.refresh}
         error={errorText}

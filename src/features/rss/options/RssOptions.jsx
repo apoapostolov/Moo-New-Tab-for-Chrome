@@ -56,6 +56,7 @@ const seedDefaults = () => {
     rssRefreshMinutes: '30',
     rssArticleTtl: '168',
     rssSource: 'feeds',
+    rssServiceUrl: 'www.feedly.com/',
   };
 
   for (const [key, value] of Object.entries(defaults)) {
@@ -273,6 +274,21 @@ const RssOptions = () => {
             />
           </Action>
         </Row>
+
+        <Row>
+          <Content
+            title="Preferred RSS service"
+            subtitle="Opened when you select the RSS widget title."
+          />
+          <Action>
+            <Text
+              name="rssServiceUrl"
+              default="www.feedly.com/"
+              category="widgetTitle"
+              placeholder="www.feedly.com/"
+            />
+          </Action>
+        </Row>
       </Group>
 
       <Group>
@@ -384,8 +400,7 @@ const RssOptions = () => {
           <Content
             title={uiText('connection_6512ee')}
             subtitle={
-              feedly.status ||
-              uiText('feedly_answers_with_the_account_the_token_bel_e793c8')
+              feedly.status || uiText('feedly_answers_with_the_account_the_token_bel_e793c8')
             }
           />
           <Action>

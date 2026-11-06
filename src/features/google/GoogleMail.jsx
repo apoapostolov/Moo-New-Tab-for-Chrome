@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { requestOwner, settingsStamp } from 'utils/requests';
 import EventBus from 'utils/eventbus';
 import WidgetCard, { WidgetHeader } from 'components/Elements/WidgetCard/WidgetCard';
+import { WidgetTitleLink } from 'features/widgetKit/WidgetTitleLink';
 
 import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { getMessageUrl, listMessages } from './services/gmail';
@@ -236,7 +237,11 @@ const GoogleMail = () => {
   return (
     <WidgetCard widget="mail" className="googleWidget">
       <WidgetHeader className="gwHead">
-        <span className="gwLabel">{uiText('mail_92379c')}</span>
+        <span className="gwLabel">
+          <WidgetTitleLink href="https://mail.google.com/mail/u/0/#inbox">
+            {uiText('mail_92379c')}
+          </WidgetTitleLink>
+        </span>
         {settings.badge === 'count' && (
           <span className="gwBadge">
             {state.unreadCount}

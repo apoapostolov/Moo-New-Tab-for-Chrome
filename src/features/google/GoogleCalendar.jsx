@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { requestOwner, settingsStamp } from 'utils/requests';
 import EventBus from 'utils/eventbus';
 import WidgetCard, { WidgetHeader } from 'components/Elements/WidgetCard/WidgetCard';
+import { WidgetTitleLink } from 'features/widgetKit/WidgetTitleLink';
 import { calendarDate } from 'utils/date';
 
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -280,7 +281,11 @@ const GoogleCalendar = () => {
   return (
     <WidgetCard widget="calendar" className="googleWidget googleCalendarWidget" aria-busy={busy}>
       <WidgetHeader className="gwHead">
-        <span className="gwLabel">{uiText('calendar_adab50')}</span>
+        <span className="gwLabel">
+          <WidgetTitleLink href="https://calendar.google.com/calendar/u/0/r">
+            {uiText('calendar_adab50')}
+          </WidgetTitleLink>
+        </span>
         <button
           type="button"
           className="gwIconButton"

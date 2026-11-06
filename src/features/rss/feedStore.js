@@ -13,6 +13,8 @@ const COUNT_KEY = 'rssItemCount';
 const REFRESH_KEY = 'rssRefreshMinutes';
 const FULL_ARTICLE_KEY = 'rssFullArticle';
 const SOURCE_KEY = 'rssSource';
+const SERVICE_KEY = 'rssServiceUrl';
+const DEFAULT_RSS_SERVICE = 'www.feedly.com/';
 
 const DEFAULT_COUNT = 3;
 // A dozen headlines is the most the card is asked to carry, so an older profile that
@@ -94,6 +96,14 @@ export function readSource() {
 
 export function saveSource(source) {
   localStorage.setItem(SOURCE_KEY, source === 'feedly' ? 'feedly' : 'feeds');
+}
+
+/** The address opened from the RSS widget title; keep arbitrary schemes out of the link. */
+export function readRssServiceUrl() {
+  return (
+    normaliseUrl(localStorage.getItem(SERVICE_KEY) || DEFAULT_RSS_SERVICE) ||
+    `https://${DEFAULT_RSS_SERVICE}`
+  );
 }
 
 /** `example.com/feed` is accepted as `https://example.com/feed`; anything else is null. */

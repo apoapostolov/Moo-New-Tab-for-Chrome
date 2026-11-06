@@ -33,7 +33,7 @@ const server = await createServer({
 const { buildOpml, opmlFilename, parseOpml } = await server.ssrLoadModule(
   '/src/features/rss/opml.js',
 );
-const { mergeFeeds, readFeeds, saveFeeds } = await server.ssrLoadModule(
+const { mergeFeeds, readFeeds, readRssServiceUrl, saveFeeds } = await server.ssrLoadModule(
   '/src/features/rss/feedStore.js',
 );
 const { mapEntry, budgetState } = await server.ssrLoadModule('/src/features/rss/feedly.js');
@@ -44,6 +44,16 @@ after(async () => {
 
 beforeEach(() => {
   localStorage.clear();
+});
+
+test('the RSS title service defaults to Feedly and rejects unsafe addresses', () => {
+  assert.equal(readRssServiceUrl(), 'https://www.feedly.com/');
+
+  localStorage.setItem('rssServiceUrl', 'reader.example/inbox');
+  assert.equal(readRssServiceUrl(), 'https://reader.example/inbox');
+
+  localStorage.setItem('rssServiceUrl', 'javascript:alert(1)');
+  assert.equal(readRssServiceUrl(), 'https://www.feedly.com/');
 });
 
 const SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
@@ -89,7 +99,10 @@ test('attribute case, single quotes and entities are all read', () => {
 
 test('a file that is not OPML, or holds no feeds, is reported rather than guessed', () => {
   assert.equal(parseOpml('<html><body/></html>').error, 'not_opml');
-  assert.equal(parseOpml('<opml><body><outline text="Only a folder"/></body></opml>').error, 'no_feeds');
+  assert.equal(
+    parseOpml('<opml><body><outline text="Only a folder"/></body></opml>').error,
+    'no_feeds',
+  );
 });
 
 test('an export groups folders, escapes what it writes and reads back unchanged', () => {
@@ -109,14 +122,11 @@ test('an export groups folders, escapes what it writes and reads back unchanged'
 
   // Folders are written before loose feeds, so the order is not the import order: what
   // has to survive is the address, the label and the path.
-  assert.deepEqual(
-    Object.fromEntries(round.map((feed) => [feed.url, [feed.title, feed.folder]])),
-    {
-      'https://a.example/feed': ['A & B', 'Tech'],
-      'https://b.example/rss': ['Deep', 'Tech / Nested'],
-      'https://c.example/rss': ['Loose', ''],
-    },
-  );
+  assert.deepEqual(Object.fromEntries(round.map((feed) => [feed.url, [feed.title, feed.folder]])), {
+    'https://a.example/feed': ['A & B', 'Tech'],
+    'https://b.example/rss': ['Deep', 'Tech / Nested'],
+    'https://c.example/rss': ['Loose', ''],
+  });
 });
 
 test('a folder with nothing under it is still written, and a feed keeps its path', () => {
@@ -158,9 +168,16 @@ test('a Feedly entry becomes the card item shape', () => {
     published: 1700000000000,
     unread: true,
     alternate: [{ href: 'https://example.com/story' }],
-    origin: { title: 'Example', htmlUrl: 'https://example.com', visualUrl: 'https://example.com/i.png' },
+    origin: {
+      title: 'Example',
+      htmlUrl: 'https://example.com',
+      visualUrl: 'https://example.com/i.png',
+    },
     summary: { content: '<p>A short summary.</p>' },
-    content: { content: '<p>First para.</p><p>Second <b>para</b>.</p><img src="https://example.com/pic.jpg"/>' },
+    content: {
+      content:
+        '<p>First para.</p><p>Second <b>para</b>.</p><img src="https://example.com/pic.jpg"/>',
+    },
     categories: [{ id: 'user/x/category/tech', label: 'tech' }],
     enclosure: [{ href: 'https://example.com/audio.mp3', type: 'audio/mpeg' }],
   });

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useEffectEvent } fro
 import { requestOwner, settingsStamp } from 'utils/requests';
 import EventBus from 'utils/eventbus';
 import WidgetCard, { WidgetHeader } from 'components/Elements/WidgetCard/WidgetCard';
+import { WidgetTitleLink } from 'features/widgetKit/WidgetKit';
 import { calendarDate } from 'utils/date';
 
 import { useGoogleAuth } from './hooks/useGoogleAuth';
@@ -326,23 +327,24 @@ const GoogleTasks = () => {
     <WidgetCard widget="tasks" className="googleWidget">
       <WidgetHeader className="gwHead">
         <span className="gwLabel">
-          {lists.length > 1 ? (
-            <select
-              className="gwSelect"
-              value={listId}
-              onChange={(changeEvent) => changeList(changeEvent.target.value)}
-              aria-label={uiText('task_list_91c40a')}
-            >
-              {lists.map((list) => (
-                <option key={list.id} value={list.id}>
-                  {list.title}
-                </option>
-              ))}
-            </select>
-          ) : (
-            lists[0]?.title || uiText('tasks_090ec5')
-          )}
+          <WidgetTitleLink href="https://tasks.google.com/">
+            {uiText('tasks_090ec5')}
+          </WidgetTitleLink>
         </span>
+        {lists.length > 1 && (
+          <select
+            className="gwSelect"
+            value={listId}
+            onChange={(changeEvent) => changeList(changeEvent.target.value)}
+            aria-label={uiText('task_list_91c40a')}
+          >
+            {lists.map((list) => (
+              <option key={list.id} value={list.id}>
+                {list.title}
+              </option>
+            ))}
+          </select>
+        )}
         <button
           type="button"
           className="gwIconButton"

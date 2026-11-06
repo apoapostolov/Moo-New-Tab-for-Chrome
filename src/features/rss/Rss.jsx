@@ -6,9 +6,17 @@ import { createPortal } from 'react-dom';
 import { MdRefresh } from 'react-icons/md';
 
 import WidgetCard, { WidgetHeader } from 'components/Elements/WidgetCard/WidgetCard';
+import { WidgetTitleLink } from 'features/widgetKit/WidgetTitleLink';
 import EventBus from 'utils/eventbus';
 
-import { loadItems, readCount, readFullArticle, readRefresh, readSource } from './feedStore';
+import {
+  loadItems,
+  readCount,
+  readFullArticle,
+  readRefresh,
+  readRssServiceUrl,
+  readSource,
+} from './feedStore';
 import { loadFeedly, markFeedlyRead } from './feedly';
 import { extractArticle, fetchArticle } from './extractArticle';
 import { cachedImages, pruneArticles, readArticle, storeArticle } from './articleCache';
@@ -225,7 +233,10 @@ const Rss = () => {
           ? [{ tag: 'p', text: item.excerpt }]
           : [];
 
-      setArticle({ status: 'ready', article: { ...built, image: built.image || item.image || null, blocks } });
+      setArticle({
+        status: 'ready',
+        article: { ...built, image: built.image || item.image || null, blocks },
+      });
 
       return;
     }
@@ -310,9 +321,7 @@ const Rss = () => {
     setFeeds((previous) => ({
       ...previous,
       items: previous.items.filter((row) => row.entryId !== item.entryId),
-      unread: Number.isFinite(previous.unread)
-        ? Math.max(0, previous.unread - 1)
-        : previous.unread,
+      unread: Number.isFinite(previous.unread) ? Math.max(0, previous.unread - 1) : previous.unread,
     }));
 
     markFeedlyRead([item.entryId]);
@@ -404,7 +413,9 @@ const Rss = () => {
     >
       <WidgetHeader className="rssHead">
         <span className="rssHeadLabel">
-          <span className="rssLabel">{uiText('reading_cffa2a')}</span>
+          <WidgetTitleLink className="rssLabel" href={readRssServiceUrl}>
+            {uiText('reading_cffa2a')}
+          </WidgetTitleLink>
           {unread ? <span className="rssUnread">{unread}</span> : null}
         </span>
         <button
