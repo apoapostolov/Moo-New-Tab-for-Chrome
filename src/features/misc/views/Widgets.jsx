@@ -9,6 +9,7 @@ import { WidgetsLayout } from 'components/Layout';
 import WidgetScroll from 'components/Layout/WidgetsLayout/WidgetScroll';
 import { uiText } from 'lib/translations';
 import {
+  ZONES,
   readOrder,
   readPlacement,
   readSecondLane,
@@ -146,9 +147,12 @@ const Widgets = () => {
         </WidgetScroll>
       ) : (
         <>
-          <div className="widgetRail widgetRail-left">{draw(groups.left)}</div>
+          {ZONES.filter((zone) => zone !== 'center').map((zone) => (
+            <div key={zone} className={`widgetRail widgetRail-${zone}`}>
+              {draw(groups[zone])}
+            </div>
+          ))}
           <WidgetsLayout split={split}>{middle}</WidgetsLayout>
-          <div className="widgetRail widgetRail-right">{draw(groups.right)}</div>
         </>
       )}
     </Suspense>

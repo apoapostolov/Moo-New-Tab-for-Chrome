@@ -1,6 +1,6 @@
 import { uiText } from 'lib/translations';
 import { useTranslationVersion } from 'contexts/TranslationContext';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { MdAutoAwesome } from 'react-icons/md';
 import {
   Header,
@@ -11,121 +11,24 @@ import {
   PreferencesWrapper,
 } from 'components/Layout/Settings';
 import WidgetSurface from 'components/Form/Settings/WidgetSurface/WidgetSurface';
-import { useLocalStorageState } from 'utils/useLocalStorageState';
-import { Radio, Dropdown, Checkbox } from 'components/Form/Settings';
+import { useWeatherSettings } from './useWeatherSettings';
+import CustomOptions from './CustomOptions';
+import { Radio, Dropdown } from 'components/Form/Settings';
 import variables from 'config/variables';
 import EventBus from 'utils/eventbus';
 import { WEATHER_PROVIDERS, WEATHER_MODELS, WEATHER_KEY_NAMES } from '../api/providers';
 import 'components/Form/Settings/Text/Text.scss';
 
-const useWeatherSettings = () => {
-  const [location, setLocation] = useLocalStorageState('location', '');
-  const [windSpeed, setWindSpeed] = useLocalStorageState('windspeed', 'true');
-
-  const showReminder = useCallback(() => {
-    document.querySelector('.reminder-info').style.display = 'flex';
-    localStorage.setItem('showReminder', true);
-  }, []);
-
-  const changeLocation = (e) => {
-    localStorage.removeItem('currentWeather');
-    setLocation(e.target.value);
-    showReminder();
-  };
-
-  const getAutoLocation = useCallback(() => {
-    setLocation(variables.getMessage('modals.main.loading'));
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const data = await (
-          await fetch(
-            `${variables.constants.API_URL}/gps?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`,
-          )
-        ).json();
-        setLocation(data[0].name);
-        showReminder();
-      },
-      (error) => {
-        console.error(error);
-      },
-      {
-        enableHighAccuracy: true,
-      },
-    );
-  }, [setLocation, showReminder]);
-
-  return {
-    location,
-    windSpeedEnabled: windSpeed === 'true',
-    setWindSpeed,
-    changeLocation,
-    getAutoLocation,
-  };
-};
-
-function CustomOptions({ provider, windSpeedEnabled, setWindSpeed }) {
-  useTranslationVersion();
-  const weatherOptions = [
-    {
-      name: 'weatherdescription',
-      textKey: 'modals.main.settings.sections.weather.extra_info.show_description',
-    },
-    {
-      name: 'cloudiness',
-      textKey: 'modals.main.settings.sections.weather.extra_info.cloudiness',
-    },
-    {
-      name: 'humidity',
-      textKey: 'modals.main.settings.sections.weather.extra_info.humidity',
-    },
-    {
-      name: 'visibility',
-      textKey: 'modals.main.settings.sections.weather.extra_info.visibility',
-    },
-    {
-      name: 'windspeed',
-      textKey: 'modals.main.settings.sections.weather.extra_info.wind_speed',
-      onChange: (value) => setWindSpeed(String(value)),
-    },
-    {
-      name: 'windDirection',
-      textKey: 'modals.main.settings.sections.weather.extra_info.wind_direction',
-      disabled: !windSpeedEnabled,
-    },
-    {
-      name: 'atmosphericpressure',
-      textKey: 'modals.main.settings.sections.weather.extra_info.atmospheric_pressure',
-    },
-  ];
-
-  return (
-    <Row>
-      <Content
-        title={variables.getMessage('modals.main.settings.sections.weather.custom_settings')}
-      />
-      <Action>
-        {weatherOptions
-          .filter((item) => provider !== 'sinoptik' || item.name !== 'windDirection')
-          .map((item) => (
-            <Checkbox
-              key={item.name}
-              name={item.name}
-              text={variables.getMessage(item.textKey)}
-              category="weather"
-              onChange={item.onChange}
-              disabled={item.disabled}
-            />
-          ))}
-      </Action>
-    </Row>
-  );
-}
-
 const WeatherOptions = () => {
   useTranslationVersion();
-  const { location, windSpeedEnabled, setWindSpeed, changeLocation, getAutoLocation } =
-    useWeatherSettings();
+  const {
+    location,
+    windSpeedEnabled,
+    setWindSpeed,
+    changeLocation,
+    saveLocation,
+    getAutoLocation,
+  } = useWeatherSettings();
   const [weatherType, setWeatherType] = useState(() => localStorage.getItem('weatherType'));
   const [provider, setProvider] = useState(() => localStorage.getItem('weatherProvider') || 'mue');
   const [sinoptikUrl, setSinoptikUrl] = useState(
@@ -185,6 +88,10 @@ const WeatherOptions = () => {
               className="text-field-input"
               value={location}
               onChange={changeLocation}
+              onBlur={(event) => saveLocation(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') event.currentTarget.blur();
+              }}
               placeholder={uiText('london_4c57f0')}
             />
           </div>
@@ -245,7 +152,11 @@ const WeatherOptions = () => {
               <Dropdown
                 name="weatherProvider"
                 category="weather"
-                items={WEATHER_PROVIDERS}
+                items={WEATHER_PROVIDERS.map((item) =>
+                  item.value === 'mue'
+                    ? { ...item, text: uiText('weather_default_provider') }
+                    : item,
+                )}
                 onChange={(value) => {
                   localStorage.removeItem('currentWeather');
                   setProvider(value);

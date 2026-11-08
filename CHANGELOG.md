@@ -1,5 +1,16 @@
 # Moo changelog
 
+## 1.0.2 — 9 November 2026 (prerelease)
+
+### Added
+
+- Widget layout: place widgets in the upper-left and upper-right corners as well as the lower corners and centre. The upper-right stack leaves room for Focus and Settings.
+
+### Fixed
+
+- Widget layout: keep drag targets stable as a widget is lifted, and preserve its placement when a drag ends without a destination.
+- Weather: distinguish the built-in service as Default Provider at the top of the provider list, keeping OpenWeather for the API-key provider. Apply a typed location on Enter or when leaving the field, clear the old forecast and refresh the selected provider without reloading the page.
+
 ## 1.0.1 — Chrome development build, 5 November 2026
 
 ### Fixed

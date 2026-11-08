@@ -69,36 +69,36 @@ const WeatherWidget = memo(({ compact = false }) => {
     const geo = geoOwner.current;
     return () => geo.cancel();
   }, [location, autoFindLocation]);
-  const updateWeather = useCallback(async () => {
-    const request = owner.current.start();
-    const stamp = settingsStamp(weatherSettings);
-    const data = await getWeather(location);
-    if (
-      !request.current() ||
-      stamp !== settingsStamp(weatherSettings)
-    )
-      return;
-    if (data) {
-      setWeatherData(data);
-      setDone(data.done);
-    } else {
-      setWeatherData({ done: true });
-      setDone(true);
-    }
+  const updateWeather = useCallback(
+    async (requestedLocation = location) => {
+      const request = owner.current.start();
+      const stamp = settingsStamp(weatherSettings);
+      const data = await getWeather(requestedLocation);
+      if (!request.current() || stamp !== settingsStamp(weatherSettings)) return;
+      if (data) {
+        setWeatherData(data);
+        setDone(data.done);
+      } else {
+        setWeatherData({ done: true });
+        setDone(true);
+      }
 
-    const zoomWeather = `${Number((localStorage.getItem('zoomWeather') || 100) / 100)}em`;
-    const weatherElement = document.querySelector('.weather');
-    if (weatherElement) {
-      weatherElement.style.fontSize = zoomWeather;
-    }
-  }, [location]);
+      const zoomWeather = `${Number((localStorage.getItem('zoomWeather') || 100) / 100)}em`;
+      const weatherElement = document.querySelector('.weather');
+      if (weatherElement) {
+        weatherElement.style.fontSize = zoomWeather;
+      }
+    },
+    [location],
+  );
 
   useEffect(() => {
     const effectOwner = owner.current;
     const handleRefresh = async (data) => {
       if (data === 'weather') {
-        setLocation(localStorage.getItem('location') || '');
-        await updateWeather();
+        const nextLocation = localStorage.getItem('location') || '';
+        setLocation(nextLocation);
+        await updateWeather(nextLocation);
       }
     };
 
@@ -149,7 +149,16 @@ const WeatherWidget = memo(({ compact = false }) => {
         <span>{`${formatNumber(weatherData.weather.temp)}${weatherData.temp_text}`}</span>
         <span className="weatherCompactDesc">{weatherData.weather.description}</span>
         <span className="loc">{weatherData.displayLocation || location}</span>
-        {source && <a className="weatherAttribution" href={source.url} target="_blank" rel="noopener noreferrer">{source.name}</a>}
+        {source && (
+          <a
+            className="weatherAttribution"
+            href={source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {source.name}
+          </a>
+        )}
       </div>
     );
   }
@@ -184,7 +193,16 @@ const WeatherWidget = memo(({ compact = false }) => {
       {Number(weatherType) === 4 && (
         <Expanded state={weatherData} weatherType={weatherType} variables={variables} />
       )}
-      {source && <a className="weatherAttribution" href={source.url} target="_blank" rel="noopener noreferrer">{source.name}</a>}
+      {source && (
+        <a
+          className="weatherAttribution"
+          href={source.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {source.name}
+        </a>
+      )}
     </div>
   );
 });

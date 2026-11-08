@@ -464,11 +464,19 @@
 
   display: grid;
   grid-template-areas:
-    'left preview preview right'
-    '. center center .';
+    'top-left preview preview top-right'
+    'left center center right';
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px var(--zone-gap);
   align-items: start;
+}
+
+.overviewSide-top-left {
+  grid-area: top-left;
+}
+
+.overviewSide-top-right {
+  grid-area: top-right;
 }
 
 .overviewSide-left {
@@ -693,6 +701,21 @@
   .previewZone-right {
     right: 12px;
     bottom: 12px;
+    align-items: flex-end;
+  }
+
+  .previewZone-top-left,
+  .previewZone-top-right {
+    top: 12px;
+  }
+
+  .previewZone-top-left {
+    left: 12px;
+    align-items: flex-start;
+  }
+
+  .previewZone-top-right {
+    right: 12px;
     align-items: flex-end;
   }
 

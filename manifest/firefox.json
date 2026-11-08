@@ -3,10 +3,13 @@
   "default_locale": "en",
   "name": "Moo",
   "description": "Fast, open and free-to-use new tab page for Firefox.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage_url": "https://github.com/apoapostolov/Moo-New-Tab-for-Firefox",
   "background": {
-    "scripts": ["calendar-alerts.js", "background.js"]
+    "scripts": [
+      "calendar-alerts.js",
+      "background.js"
+    ]
   },
   "action": {
     "default_icon": "icons/128x128.png"
@@ -24,9 +27,19 @@
       "id": "moo@apoapostolov"
     }
   },
-  "permissions": ["identity", "storage", "clipboardWrite", "alarms"],
-  "optional_permissions": ["bookmarks", "notifications"],
-  "optional_host_permissions": ["*://*/*"],
+  "permissions": [
+    "identity",
+    "storage",
+    "clipboardWrite",
+    "alarms"
+  ],
+  "optional_permissions": [
+    "bookmarks",
+    "notifications"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
   "host_permissions": [
     "https://images-api.nasa.gov/*",
     "https://images-assets.nasa.gov/*",

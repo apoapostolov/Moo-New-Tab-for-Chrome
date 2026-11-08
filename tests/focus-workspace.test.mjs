@@ -204,3 +204,47 @@ test('a settings reset keeps both personal link lists and per-note Focus choices
   assert.equal(localStorage.getItem('quicklinksSeparateFocus'), 'false');
   assert.equal(localStorage.getItem('focusWidgetVisibility'), '{}');
 });
+
+test('all corner placements persist independently and survive backup validation', () => {
+  widgets.savePlacement({ airquality: 'top-right', weather: 'top-left', mail: 'right' });
+  assert.equal(widgets.readPlacement().airquality, 'top-right');
+  assert.equal(widgets.readPlacement('focus').weather, 'top-left');
+  widgets.savePlacement({ airquality: 'left' }, 'focus');
+  assert.equal(widgets.readPlacement('focus').airquality, 'left');
+  assert.equal(widgets.readPlacement().airquality, 'top-right');
+  const groups = widgets.groupByZone(widgets.readOrder(), widgets.readPlacement());
+  assert.deepEqual(groups['top-right'], ['airquality']);
+  assert.equal(widgets.placementFromGroups(groups).weather, 'top-left');
+  const settings = {
+    widgetPlacement: JSON.stringify(widgets.readPlacement()),
+    focusWidgetPlacement: JSON.stringify(widgets.readPlacement('focus')),
+  };
+  const validated = backup.validateSettings(settings);
+  assert.deepEqual({ ...validated.settings }, settings);
+  assert.deepEqual(validated.skipped, []);
+});
+
+test('drop targets distinguish upper and lower corners sharing the same horizontal range', async () => {
+  const { readTarget } = await server.ssrLoadModule(
+    '/src/features/misc/sections/overviewGeometry.js',
+  );
+  const box = (left, top, bottom) => ({
+    left,
+    right: left + 100,
+    top,
+    bottom,
+    cards: [],
+    gaps: [],
+  });
+  const geometry = {
+    'top-left': box(0, 0, 50),
+    left: box(0, 100, 200),
+    center: box(120, 100, 200),
+    right: box(240, 100, 200),
+    'top-right': box(240, 0, 50),
+  };
+  assert.equal(readTarget(geometry, { x: 280, y: 25 }).zone, 'top-right');
+  assert.equal(readTarget(geometry, { x: 280, y: 150 }).zone, 'right');
+  assert.equal(readTarget(geometry, { x: 30, y: 25 }).zone, 'top-left');
+  assert.equal(readTarget(geometry, { x: 30, y: 150 }).zone, 'left');
+});

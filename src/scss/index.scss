@@ -49,14 +49,28 @@ body {
   }
 }
 
-.widgetRail-left {
+.widgetRail-left,
+.widgetRail-top-left {
   left: 1rem;
   align-items: flex-start;
 }
 
-.widgetRail-right {
+.widgetRail-right,
+.widgetRail-top-right {
   right: 1rem;
   align-items: flex-end;
+}
+
+.widgetRail-top-left,
+.widgetRail-top-right {
+  top: 5rem;
+  bottom: auto;
+  max-height: calc(50dvh - 6rem);
+}
+
+body:has(.widgetRail-top-left > *) .widgetRail-left,
+body:has(.widgetRail-top-right > *) .widgetRail-right {
+  max-height: calc(50dvh - 2rem);
 }
 
 .widgetRail > .weather,
@@ -596,4 +610,9 @@ body.hardTextShadow {
   .widgetScrollThumb {
     transition: none;
   }
+}
+
+.widgetRail.widgetRail-top-left,
+.widgetRail.widgetRail-top-right {
+  max-height: calc(50dvh - 6rem);
 }

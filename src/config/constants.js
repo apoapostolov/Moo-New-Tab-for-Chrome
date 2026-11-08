@@ -27,7 +27,7 @@ export const EMAIL = 'theapoapostolov@gmail.com';
 export const TWITTER_HANDLE = 'apomakesmods';
 export const DISCORD_SERVER = 'zv8C9F8';
 
-export const VERSION = '1.0.1';
+export const VERSION = '1.0.2';
 
 // Feature flags
 // Hides the Experimental page; its debug hotkey loads unconditionally.
