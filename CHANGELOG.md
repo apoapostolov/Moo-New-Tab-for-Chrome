@@ -1,6 +1,6 @@
 # Moo changelog
 
-## 1.0.2 — 9 November 2026 (prerelease)
+## 1.0.2 — 9 November 2026
 
 ### Added
 
