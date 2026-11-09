@@ -1,5 +1,9 @@
 [
   {
+    "name": "surfaceNavbar",
+    "value": "classic"
+  },
+  {
     "name": "animations",
     "value": "true"
   },
@@ -405,7 +409,7 @@
   },
   {
     "name": "widgetPlacement",
-    "value": "{\"weather\":\"left\",\"rss\":\"center\"}"
+    "value": "{\"weather\":\"right\",\"rss\":\"center\"}"
   },
   {
     "name": "widgetSecondLane",

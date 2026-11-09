@@ -51,7 +51,7 @@
 
 .navbar-hover {
   position: absolute;
-  top: 0;
+  top: var(--upper-right-bottom, 0);
   right: 0;
   height: 50px;
   width: 500px;
@@ -75,7 +75,7 @@
 .navbar-container {
   position: absolute;
   z-index: 3;
-  top: 1rem;
+  top: calc(var(--upper-right-bottom, 0px) + 1rem);
   right: 1rem;
   display: flex;
   flex-flow: column;
@@ -161,5 +161,29 @@
         box-shadow: t($boxShadow);
       }
     }
+  }
+}
+
+.navbar-hover .navbar-container {
+  top: 1rem;
+}
+
+.navbar.navbarGlass button.navbarButton {
+  backdrop-filter: blur(20px) saturate(150%);
+
+  @include themed {
+    background: t($glassBackground);
+    border: 1px solid t($glassBorder);
+    box-shadow: t($glassShadow);
+    color: t($color);
+  }
+
+  &:hover {
+    backdrop-filter: blur(24px) saturate(170%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
   }
 }

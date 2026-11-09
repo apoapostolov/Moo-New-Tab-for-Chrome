@@ -4,11 +4,16 @@
 
 ### Added
 
-- Widget layout: place widgets in the upper-left and upper-right corners as well as the lower corners and centre. The upper-right stack leaves room for Focus and Settings.
+- Widget layout: place widgets in the upper-left and upper-right corners as well as the lower corners and centre. Upper-right widgets appear above the navbar buttons.
+- Navbar: choose Classic or Glass styling for the navbar buttons in Settings → Navbar.
+
+### Changed
+
+- Weather: new profiles and resets place the widget in the bottom-right corner. Saved placements are preserved, including the basic layout in narrow windows.
 
 ### Fixed
 
-- Widget layout: keep drag targets stable as a widget is lifted, and preserve its placement when a drag ends without a destination.
+- Widget layout: upper side cards and drop placeholders fill their Overview containers, lower side containers align with the preview bottom, and the navbar follows the upper-right stack as its height changes. Drag targets stay stable when lifting a widget, and a drag without a destination preserves placement.
 - Weather: distinguish the built-in service as Default Provider at the top of the provider list, keeping OpenWeather for the API-key provider. Apply a typed location on Enter or when leaving the field, clear the old forecast and refresh the selected provider without reloading the page.
 
 ## 1.0.1 — Chrome development build, 5 November 2026

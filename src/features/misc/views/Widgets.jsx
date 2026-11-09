@@ -77,7 +77,7 @@ const Widgets = () => {
   };
   const basicLayout =
     widgets.weather &&
-    layout.placement.weather === 'left' &&
+    ['left', 'right'].includes(layout.placement.weather) &&
     ['time', 'aiask'].every((id) => !widgets[id] || layout.placement[id] === 'center') &&
     Object.entries(widgets).every(
       ([id, widget]) => !widget || ['time', 'aiask', 'weather'].includes(id),

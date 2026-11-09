@@ -465,7 +465,8 @@
   display: grid;
   grid-template-areas:
     'top-left preview preview top-right'
-    'left center center right';
+    'left preview preview right'
+    '. center center .';
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px var(--zone-gap);
   align-items: start;
@@ -480,10 +481,12 @@
 }
 
 .overviewSide-left {
+  align-self: end;
   grid-area: left;
 }
 
 .overviewSide-right {
+  align-self: end;
   grid-area: right;
 }
 
@@ -538,8 +541,7 @@
   min-width: 0;
 }
 
-.widgetZone[data-zone='left'] .zoneRow,
-.widgetZone[data-zone='right'] .zoneRow {
+.widgetZone:not([data-zone='center']) .zoneRow {
   grid-template-columns: minmax(0, 1fr);
 }
 

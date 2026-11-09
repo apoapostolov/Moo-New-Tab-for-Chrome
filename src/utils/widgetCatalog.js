@@ -20,7 +20,7 @@ export const WIDGETS = [
     label: () => uiText('weather_full_widget'),
     setting: 'weatherEnabled',
     onByDefault: true,
-    zone: 'left',
+    zone: 'right',
   },
   {
     id: 'date',

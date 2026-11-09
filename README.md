@@ -20,7 +20,7 @@ Moo is a customizable new tab page for Chrome. It gives you somewhere to check t
 
 The preview uses fictional mail, events, tasks and weather over a real video background. [Compare the three backgrounds](assets/previews/README.md).
 
-Moo opens directly in English with the time, Search/Ask Bar, basic weather in the bottom-left corner and Unsplash backgrounds. Other widgets are enabled in Settings.
+Moo opens directly in English with the time, Search/Ask Bar, basic weather in the bottom-right corner and Unsplash backgrounds. Other widgets are enabled in Settings.
 
 ## Features
 
@@ -34,7 +34,7 @@ Moo opens directly in English with the time, Search/Ask Bar, basic weather in th
 - Air Quality: choose a compact AQI reading, a forecast summary or detailed pollutant, UV and pollen readings for a saved city or coordinates. Readings use Open-Meteo's CAMS model forecasts.
 - Bookmarks: bring browser bookmarks, Raindrop and Readwise reading together, with recent saves, older discoveries and a shared detail preview. [Setup and options](docs/BOOKMARKS.md).
 - GitHub: check review requests, your pull requests, assigned issues and workflow runs through status glyphs and compact tabs. New items receive a count badge, and the last opened tab is restored across sessions. Hover to read the complete description and developer details. Public repositories work with a username; an optional personal token adds access to selected private repositories. [Widget setup and advanced options](docs/HABITS-AIR-QUALITY-GITHUB.md).
-- Widget layout: show, hide and arrange widgets in the four corners or centre column under Settings → Overview. The Standard / Focus selector saves separate widget visibility and placement for Focus sessions and Progress clock work shifts. Quick Links can use a separate Focus/Work list; each floating item has a Show in Focus checkbox. Narrow and short windows use a scrollable layout.
+- Widget layout: show, hide and arrange widgets in the four corners or centre column under Settings → Overview. The Standard / Focus selector saves separate widget visibility and placement for Focus sessions and Progress clock work shifts. Quick Links can use a separate Focus/Work list; each floating item has a Show in Focus checkbox. Navbar buttons have separate Classic and Glass styling under Settings → Navbar. Narrow and short windows use a scrollable layout.
 - Backgrounds: use local pictures, stock photos, video clips or live channels. Some sources need a free API key. While a video is playing, triple-click the page to hide the widgets; triple-click again or press Escape to return.
 - Backups: export your setup under Settings → Advanced, including uploaded pictures if you choose. Imports show a preview before applying, and sign-in credentials stay out of the backup.
 

@@ -21,6 +21,7 @@ import { Row, Content, Action, Group } from 'components/Layout/Settings/Item';
 import { Header } from 'components/Layout/Settings';
 
 import AppsOptions from './AppsOptions';
+import WidgetSurface from 'components/Form/Settings/WidgetSurface/WidgetSurface';
 
 function NavbarOptions() {
   useTranslationVersion();
@@ -175,6 +176,7 @@ function NavbarOptions() {
         zoomCategory="navbar"
       />
       <Group>
+        <WidgetSurface setting="surfaceNavbar" category="navbar" />
         <AdditionalSettings />
         <NavbarOptions />
       </Group>

@@ -13,10 +13,12 @@ import EventBus from 'utils/eventbus';
 
 import './scss/index.scss';
 import FocusButton from 'features/focus/FocusButton';
+import useNavbarClearance from './useNavbarClearance';
 
 const Navbar = ({ openModal }) => {
   useTranslationVersion();
   const t = useT();
+  const navbarRef = useNavbarClearance();
   const [classList] = useState(
     localStorage.getItem('widgetStyle') === 'legacy' ? 'navbar old' : 'navbar new',
   );
@@ -28,6 +30,7 @@ const Navbar = ({ openModal }) => {
   const [refreshEnabled, setRefreshEnabled] = useState(localStorage.getItem('refresh'));
   const [refreshOption, setRefreshOption] = useState(localStorage.getItem('refreshOption') || '');
   const [zoomFontSize, setZoomFontSize] = useState(getZoomFontSize());
+  const [surface, setSurface] = useState(() => localStorage.getItem('surfaceNavbar') || 'classic');
   const [navbarHover, setNavbarHover] = useState(localStorage.getItem('navbarHover') === 'true');
   const [viewEnabled, setViewEnabled] = useState(localStorage.getItem('view') === 'true');
   // const [notesEnabled, setNotesEnabled] = useState(localStorage.getItem('notesEnabled') === 'true');
@@ -47,6 +50,7 @@ const Navbar = ({ openModal }) => {
         setFocusEnabled(localStorage.getItem('focusEnabled') === 'true');
         setAppsEnabled(localStorage.getItem('appsEnabled') === 'true');
         setZoomFontSize(getZoomFontSize());
+        setSurface(localStorage.getItem('surfaceNavbar') || 'classic');
       }
     };
 
@@ -59,8 +63,10 @@ const Navbar = ({ openModal }) => {
   const backgroundEnabled = localStorage.getItem('background') === 'true';
 
   const navbar = (
-    <div className="navbar-container">
-      <div className={`${classList}${focusEnabled ? ' focusNavbar' : ''}`}>
+    <div className="navbar-container" ref={navbarRef}>
+      <div
+        className={`${classList}${surface === 'glass' ? ' navbarGlass' : ''}${focusEnabled ? ' focusNavbar' : ''}`}
+      >
         {viewEnabled && backgroundEnabled ? <Maximise fontSize={zoomFontSize} /> : null}
         {focusEnabled && <FocusButton fontSize={zoomFontSize} />}
         {/* {notesEnabled && <Notes fontSize={zoomFontSize} />}
