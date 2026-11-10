@@ -26,7 +26,8 @@ export function searchServices(value, limit = 12) {
 export function serviceLogo(id, remote = true) {
   const entry = entries.get(id);
   if (!entry) return '';
-  if (local.has(id)) return `${import.meta.env.BASE_URL}src/assets/subscription-icons/${id}.${entry.format}`;
+  if (local.has(id))
+    return `${import.meta.env.BASE_URL}src/assets/subscription-icons/${id}.${entry.format}`;
   return remote
     ? `https://raw.githubusercontent.com/homarr-labs/dashboard-icons/${catalogue.commit}/${entry.format}/${id}.${entry.format}`
     : '';

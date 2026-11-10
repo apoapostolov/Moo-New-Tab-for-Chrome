@@ -4,23 +4,49 @@ import { WidgetShell, IconButton } from 'features/widgetKit/WidgetKit';
 import { useTranslationVersion } from 'contexts/TranslationContext';
 import { uiText } from 'lib/translations';
 import useSubscriptions from './useSubscriptions';
-import { subscriptionTotals, visibleSubscriptions } from './subscriptionActions';
+import { saveSubscription, visibleSubscriptions } from './subscriptionActions';
 import SubscriptionRow from './SubscriptionRow';
 import SubscriptionDialog from './SubscriptionDialog';
+import useSubscriptionRates from './useSubscriptionRates';
+import SubscriptionTotals from './SubscriptionTotals';
+import { cancelBy } from './subscriptionDates';
 import './subscriptions.scss';
 
 export default function Subscriptions() {
   const { language } = useTranslationVersion();
   const locale = language.replaceAll('_', '-');
   const state = useSubscriptions();
+  const fx = useSubscriptionRates(state.items, state.today);
+  const [retained, setRetained] = useState([]);
   const [view, setView] = useState('upcoming');
   const [editing, setEditing] = useState(null);
-  const rows = visibleSubscriptions(state.items, view, state.today);
+  const visible = visibleSubscriptions(state.items, view, state.today);
+  const rows = [
+    ...visible,
+    ...state.items.filter(
+      (item) => retained.includes(item.id) && !visible.some((entry) => entry.id === item.id),
+    ),
+  ].sort((a, b) => cancelBy(a).localeCompare(cancelBy(b)) || a.name.localeCompare(b.name));
+  const missing = fx.missing.filter(
+    (currency) =>
+      state.items.some((item) => item.status === 'active' && item.currency === currency) ||
+      rows.some((item) => item.currency === currency),
+  );
+  const onStatus = async (item, status) => {
+    setRetained((old) => [...new Set([...old, item.id])]);
+    await state.change((items) => saveSubscription(items, { ...item, status }, item));
+  };
   return (
     <WidgetShell
       widget="subscriptions"
+      showSettings={false}
       title={uiText('subscriptions_title')}
-      error={state.error}
+      error={
+        state.error ||
+        (!fx.loading && missing.length
+          ? uiText('subscriptions_rates_missing', { currencies: missing.join(', ') })
+          : null)
+      }
       className="subscriptionsWidget"
       actions={
         <IconButton
@@ -38,24 +64,18 @@ export default function Subscriptions() {
         </p>
       ) : (
         <>
-          <div className="subscriptionTotals">
-            {subscriptionTotals(state.items).map(([currency, yearly]) => {
-              const money = (value) =>
-                new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
-              return (
-                <p key={currency}>
-                  {money(yearly / 12)} {uiText('subscriptions_per_month')} · {money(yearly)}{' '}
-                  {uiText('subscriptions_per_year')}
-                </p>
-              );
-            })}
-            {state.items.some((item) => item.status === 'active') && (
-              <small>{uiText('subscriptions_totals_hint')}</small>
-            )}
-          </div>
+          <SubscriptionTotals items={state.items} fx={fx} locale={locale} />
           <div className="subscriptionTabs" role="group" aria-label={uiText('subscriptions_view')}>
             {['upcoming', 'all', 'cancelled'].map((id) => (
-              <button type="button" key={id} aria-pressed={view === id} onClick={() => setView(id)}>
+              <button
+                type="button"
+                key={id}
+                aria-pressed={view === id}
+                onClick={() => {
+                  if (view !== id) setRetained([]);
+                  setView(id);
+                }}
+              >
                 {uiText(`subscriptions_${id}`)}
               </button>
             ))}
@@ -70,6 +90,8 @@ export default function Subscriptions() {
                 onEdit={(entry) => setEditing({ item: entry })}
                 change={state.change}
                 pending={state.pending}
+                onStatus={onStatus}
+                fx={fx}
               />
             ))}
           </div>
@@ -78,7 +100,6 @@ export default function Subscriptions() {
               {uiText(state.items.length ? 'subscriptions_empty_view' : 'subscriptions_empty')}
             </p>
           )}
-          <p className="subscriptionHint">{uiText('subscriptions_tracking_only')}</p>
         </>
       )}
       {editing && (

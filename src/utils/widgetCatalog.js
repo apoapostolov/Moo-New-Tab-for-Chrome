@@ -102,6 +102,12 @@ export const WIDGETS = [
     zone: 'center',
   },
   {
+    id: 'knowledge',
+    label: () => uiText('knowledge_title'),
+    setting: 'knowledgeEnabled',
+    zone: 'center',
+  },
+  {
     id: 'planning',
     label: () => uiText('planning_title'),
     setting: 'planningEnabled',
@@ -142,6 +148,7 @@ export const DEFAULT_ORDER = [
   'portfolio',
   'countdown',
   'planning',
+  'knowledge',
   'habits',
   'airquality',
   'github',

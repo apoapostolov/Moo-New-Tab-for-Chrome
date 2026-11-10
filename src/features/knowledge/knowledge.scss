@@ -1,0 +1,115 @@
+@use 'scss/variables' as *;
+
+.knowledgeWidget {
+  min-width: 0;
+  text-align: left;
+}
+
+.light .knowledgeWidget.glassSurface.glassSurface {
+  background: rgb(255 255 255 / 82%);
+}
+
+.knowledgeEyebrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 2px 0 7px;
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.knowledgeSubject {
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledgeTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.knowledgeFigure {
+  margin: 0 0 10px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 168px;
+    object-fit: cover;
+    object-position: center 35%;
+    border-radius: 8px;
+    background: color-mix(in srgb, currentcolor 6%, transparent);
+  }
+
+  figcaption {
+    margin-top: 5px;
+    font-size: 9px;
+    line-height: 1.4;
+    opacity: 0.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.knowledgeCommons img {
+  object-fit: contain;
+}
+
+.knowledgeSummary {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.knowledgeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.knowledgeLicense {
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+.knowledgeStatus {
+  margin: 8px 0 0;
+  font-size: 10px;
+  line-height: 1.5;
+  opacity: 0.65;
+}

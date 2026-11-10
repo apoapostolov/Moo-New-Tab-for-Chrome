@@ -4,6 +4,7 @@ const dates = await server.ssrLoadModule('/src/features/subscriptions/subscripti
 const schema = await server.ssrLoadModule('/src/features/subscriptions/subscriptionSchema.js');
 const actions = await server.ssrLoadModule('/src/features/subscriptions/subscriptionActions.js');
 const store = await server.ssrLoadModule('/src/features/subscriptions/subscriptionStore.js');
+const rates = await server.ssrLoadModule('/src/features/subscriptions/subscriptionRates.js');
 const logos = await server.ssrLoadModule('/src/features/subscriptions/serviceLogos.js');
 const { createBackup } = await server.ssrLoadModule('/src/utils/settings/export.js');
 const { validateSettings } = await server.ssrLoadModule('/src/utils/settings/backupSchema.js');
@@ -80,15 +81,16 @@ test('prices use currency precision and summaries never mix currencies or includ
     ['2', 'BAD'],
   ])
     assert.equal(schema.parseAmount(price, currency), null);
-  const totals = actions.subscriptionTotals([
-    item('eur'),
-    item('usd', { currency: 'USD', amount: 12000, cycle: 'yearly' }),
-    item('trial', { status: 'trial', amount: 50000 }),
-    item('cancel', { status: 'cancelled' }),
-  ]);
-  assert.equal(totals.length, 2);
-  assert(Math.abs(totals[0][1] - 119.88) < 1e-9);
-  assert.deepEqual(totals[1], ['USD', 120]);
+  const total = rates.convertedSubscriptionTotal(
+    [
+      item('eur'),
+      item('usd', { currency: 'USD', amount: 12000, cycle: 'yearly' }),
+      item('trial', { status: 'trial', amount: 50000 }),
+      item('cancel', { status: 'cancelled' }),
+    ],
+    { base: 'EUR', rates: { EUR: 1, USD: 1.2 } },
+  );
+  assert(Math.abs(total - 219.88) < 1e-9);
 });
 
 test('subscription deadlines include overdue entries and archive excludes cancelled services', () => {

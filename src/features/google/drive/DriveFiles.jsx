@@ -2,11 +2,13 @@ import { useEffect, useRef } from 'react';
 import { MdFolder, MdDescription, MdStar } from 'react-icons/md';
 import { uiText } from 'lib/translations';
 import { DRIVE_FOLDER, driveHref } from './driveService';
+import useFadingScrollbar from './useFadingScrollbar';
 import { atDriveBottom } from './drivePreferences';
 
 export default function DriveFiles({ state, pageSize, language, onFolder, query }) {
   const { files, more, loading, error, incomplete, nextPageToken } = state;
   const list = useRef(null);
+  useFadingScrollbar(list);
   useEffect(() => {
     list.current.scrollTop = 0;
   }, [query]);

@@ -1,4 +1,5 @@
 import { record, validators, list, media, text } from './backupValidators';
+import { validKnowledgePreference } from '../../features/knowledge/knowledgeSettings';
 import { validCurrency } from '../../features/subscriptions/subscriptionSchema';
 import defaults from '../data/default_settings.json';
 import supportedKeys from '../data/settings_keys.json';
@@ -11,6 +12,9 @@ export const isCredential = (key) =>
 export const TRANSIENT_KEYS = new Set([
   'bookmarksOpenCache',
   'githubCache',
+  'knowledgeCache',
+  'subscriptionsRatesCache',
+  'knowledgeRetry',
   'githubRetry',
   'airQualityCache',
   'focusSession',
@@ -109,6 +113,8 @@ export function validateSettings(input) {
       throw new Error(`The saved value for ${key} must be a whole number.`);
     if (key === 'googleDriveView' && !['recent', 'starred', 'shared'].includes(value))
       throw new Error('The saved Drive view is not valid.');
+    if (!validKnowledgePreference(key, value))
+      throw new Error(`The saved Knowledge setting for ${key} is not valid.`);
     const original = defaultValues[key];
     if ((original === 'true' || original === 'false') && !['true', 'false'].includes(value))
       throw new Error(`The saved value for ${key} must be on or off.`);

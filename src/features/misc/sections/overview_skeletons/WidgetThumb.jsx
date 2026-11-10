@@ -11,6 +11,7 @@ export const THUMB_LAYOUT = {
   habits: { icon: 'check', lines: ['wide', 'short'] },
   drive: { icon: 'square', lines: ['wide', 'medium'] },
   subscriptions: { icon: 'square', lines: ['wide', 'short'] },
+  knowledge: { icon: 'article', lines: ['wide', 'medium', 'short'] },
   planning: { icon: 'check', lines: ['wide', 'medium', 'short'] },
   airquality: { icon: 'weather', lines: ['medium', 'short'] },
   github: { icon: 'article', lines: ['wide', 'medium'] },

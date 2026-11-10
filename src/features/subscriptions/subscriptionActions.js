@@ -1,4 +1,4 @@
-import { SUBSCRIPTION_LIMIT, currencyDigits } from './subscriptionSchema';
+import { SUBSCRIPTION_LIMIT } from './subscriptionSchema';
 import { advanceRenewal, cancelBy, dayDistance } from './subscriptionDates';
 
 export function saveSubscription(items, draft, original) {
@@ -30,16 +30,6 @@ export const renewSubscription = (items, item, today) =>
     item,
   );
 
-export function subscriptionTotals(items) {
-  const totals = new Map();
-  for (const item of items.filter((entry) => entry.status === 'active')) {
-    const yearly =
-      (item.amount / 10 ** currencyDigits(item.currency)) *
-      { monthly: 12, yearly: 1, quarterly: 4, weekly: 52 }[item.cycle];
-    totals.set(item.currency, (totals.get(item.currency) || 0) + yearly);
-  }
-  return [...totals].sort(([a], [b]) => a.localeCompare(b));
-}
 export function visibleSubscriptions(items, view, today) {
   return items
     .filter((item) =>

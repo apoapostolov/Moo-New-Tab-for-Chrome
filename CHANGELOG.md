@@ -4,12 +4,16 @@
 
 ### Added
 
+- Knowledge: discover Wikipedia articles or Wikimedia Commons images, filter by comma-separated subjects, and choose a new page per reload, per local day or every 1–168 hours. Includes thumbnails, source and image credits, offline cached text and Classic/Glass styling.
+
 - Google Drive: reopen recent, starred and shared files, search file names and browse folders with read-only metadata access. Configure it in Settings → Google; existing accounts reconnect to approve Drive access.
 - Subscriptions: track renewals, trials, cancellation deadlines and costs by currency, with local storage, Backups and a searchable service-logo catalogue.
 
 ### Changed
 
-- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action.
+- Subscriptions: use compact two-line rows with bare service logos, centered totals and an Active/Cancelled control that keeps the changed row available for undo until the view changes. Convert prices and totals to a display currency using daily reference rates while retaining original billing amounts.
+
+- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action. The file scrollbar appears while scrolling or focused and fades out when idle.
 
 ## 1.0.2 — 9 November 2026; updated 10 November 2026
 

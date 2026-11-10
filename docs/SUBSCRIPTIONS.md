@@ -2,11 +2,19 @@
 
 Enable Subscriptions in Settings → Subscriptions or Overview. Add a service with its price per billing cycle, currency, next renewal date and the number of days before renewal you need to cancel. Free trials use the first payment date and the price that will apply afterwards. Dates accept English phrases such as “tomorrow” and “in 30 days”, as well as YYYY-MM-DD. The interpreted date appears before saving.
 
-Next 30 days shows entries whose cancellation deadlines fall within the next month, including overdue entries. All active includes active services and trials regardless of date. Cancelled holds the archive. Each entry opens an editor for its dates, notes, service logo and management link. The archive button records that you cancelled a service elsewhere; it does not cancel anything at the provider. Reopen the editor and set Status to Active to restore an archived entry. Deleting asks for a second confirmation.
+Next 30 days shows entries whose cancellation deadlines fall within the next month, including overdue entries. All active includes active services and trials regardless of date. Cancelled holds the archive. Each entry uses two lines: the name and cost on the left, with the renewal date and status on the right. Click the name or logo to edit dates, notes, original billing price or management link. The management link is available inside the editor. Deleting asks for a second confirmation.
 
-Renewal dates stay visible until you confirm what happened. Use Renewed after checking a charge, or Started paid plan after a trial converts. These actions advance to the first renewal after today and keep the original billing day: January 31 becomes February 28 and then March 31. Trials are not converted automatically. Change the date in the editor if a service uses a different billing rule.
+Changing the row from Active to Cancelled records that you cancelled elsewhere. It does not contact the provider. The row remains in the current view with its saved cancel-by date and an undo icon, so you can immediately reverse the change. Once you switch views, normal filtering applies: it leaves Active and appears in Cancelled. Undo restores Active without changing the billing date. Free trials have a Trial status until you change them.
 
-The summary estimates monthly and yearly equivalents for active plans. Trials and cancelled services are excluded. Every currency has its own total; Moo does not fetch exchange rates. Weekly plans use 52 payments per year, quarterly plans use four, and monthly plans use twelve. These are planning estimates from the prices you entered, including tax only if you included it. The widget neither reads a bank account nor sends notifications while the browser is closed.
+The renewal icon records a renewal after its date has arrived. It advances to the first renewal after today and keeps the original billing day: January 31 becomes February 28 and then March 31. Trials are not converted automatically. Change the date in the editor if a service uses a different billing rule.
+
+## Display currency and exchange rates
+
+Choose Display currency in Settings → Subscriptions. It also supplies the initial currency for new entries. Original prices and billing currencies remain stored and editable. Rows and the centered monthly/yearly summary convert to the display currency using [Frankfurter](https://frankfurter.dev/) reference rates, without an API key. Only currency codes are sent to the provider, not service names, amounts, notes or renewal dates.
+
+Rates are cached for up to an hour, refreshed on a new local day and checked again when the tab becomes visible. Each pair keeps its actual reference date; this can be an earlier business day on weekends or holidays. Hover over the total to see the date or a saved-rate indication. Reference conversions are estimates and do not include a bank's fees. These figures are not a transaction ledger.
+
+The summary includes active plans, excluding trials and cancelled services. Weekly plans use 52 payments per year, quarterly plans use four, and monthly plans use twelve. Include tax in the price if you want it counted. If a conversion is unavailable, that row keeps its original currency and the combined total is unavailable; unlike currencies are never added together. Matching saved rates can still be used offline, with their date retained. Exchange-rate caches are excluded from Backups.
 
 ## Service artwork
 

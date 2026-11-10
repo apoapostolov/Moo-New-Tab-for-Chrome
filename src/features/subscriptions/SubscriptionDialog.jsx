@@ -70,6 +70,11 @@ export default function SubscriptionDialog({ item, change, pending, error, onClo
               {uiText(armed ? 'subscriptions_confirm_delete' : 'planning_delete')}
             </button>
           )}
+          {item?.url && (
+            <a className="gwButton" href={item.url} target="_blank" rel="noopener noreferrer">
+              {uiText('subscriptions_manage')}
+            </a>
+          )}
           <span className="gwSpacer" />
           <button type="button" className="gwButton" onClick={onClose}>
             {uiText('portfolio_cancel')}

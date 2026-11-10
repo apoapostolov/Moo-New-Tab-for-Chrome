@@ -61,6 +61,7 @@
     "https://api.github.com/*",
     "https://api.raindrop.io/*",
     "https://readwise.io/*",
-    "https://photon.komoot.io/*"
+    "https://photon.komoot.io/*",
+    "https://*.wikipedia.org/*"
   ]
 }

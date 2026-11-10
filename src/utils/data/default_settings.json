@@ -854,5 +854,33 @@
   {
     "name": "googleDriveView",
     "value": "recent"
+  },
+  {
+    "name": "knowledgeEnabled",
+    "value": false
+  },
+  {
+    "name": "surfaceKnowledge",
+    "value": "classic"
+  },
+  {
+    "name": "knowledgeSource",
+    "value": "wikipedia"
+  },
+  {
+    "name": "knowledgeLanguage",
+    "value": "en"
+  },
+  {
+    "name": "knowledgeMode",
+    "value": "hours"
+  },
+  {
+    "name": "knowledgeHours",
+    "value": 8
+  },
+  {
+    "name": "knowledgeSubjects",
+    "value": ""
   }
 ]

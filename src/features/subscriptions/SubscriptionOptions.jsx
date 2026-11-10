@@ -1,9 +1,8 @@
 import { Header, Group, Row, Content } from 'components/Layout/Settings';
 import WidgetSurface from 'components/Form/Settings/WidgetSurface/WidgetSurface';
-import { OptionInput, OptionToggle } from 'features/widgetKit/WidgetKit';
+import { OptionSelect, OptionToggle } from 'features/widgetKit/WidgetKit';
 import { useTranslationVersion } from 'contexts/TranslationContext';
 import { uiText } from 'lib/translations';
-import { validCurrency } from './subscriptionSchema';
 
 export default function SubscriptionOptions() {
   useTranslationVersion();
@@ -23,13 +22,12 @@ export default function SubscriptionOptions() {
           />
         </Row>
         <WidgetSurface setting="surfaceSubscriptions" category="subscriptions" />
-        <OptionInput
+        <OptionSelect
           category="subscriptions"
           name="subscriptionsCurrency"
           title={uiText('subscriptions_default_currency')}
           hint={uiText('subscriptions_currency_hint')}
-          maxLength={3}
-          validate={validCurrency}
+          items={Intl.supportedValuesOf('currency').map((value) => ({ value, text: value }))}
         />
         <OptionToggle
           category="subscriptions"
@@ -47,6 +45,16 @@ export default function SubscriptionOptions() {
                 rel="noopener noreferrer"
               >
                 Dashboard Icons · Homarr Labs · Apache-2.0
+              </a>
+            }
+          />
+        </Row>
+        <Row>
+          <Content
+            title={uiText('subscriptions_rate_provider')}
+            subtitle={
+              <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">
+                Frankfurter · daily reference rates
               </a>
             }
           />

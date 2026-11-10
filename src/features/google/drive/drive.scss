@@ -66,12 +66,12 @@
   overscroll-behavior: contain;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 35%) transparent;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 200ms ease;
   color-scheme: dark;
 }
 
 .light .driveWidget.glassSurface .driveFiles {
-  scrollbar-color: rgb(0 0 0 / 35%) transparent;
   color-scheme: light;
 }
 
@@ -156,4 +156,15 @@
 
 .drivePageBoundary {
   height: 1px;
+}
+
+.driveFiles.driveScrolling,
+.driveFiles.driveFocused {
+  scrollbar-color: color-mix(in srgb, currentcolor 35%, transparent) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driveFiles {
+    transition: none;
+  }
 }
