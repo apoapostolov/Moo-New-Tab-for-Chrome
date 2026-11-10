@@ -850,5 +850,9 @@
   {
     "name": "googleDriveRefresh",
     "value": 15
+  },
+  {
+    "name": "googleDriveView",
+    "value": "recent"
   }
 ]

@@ -12,7 +12,6 @@ import { useGoogleAuth } from '../hooks/useGoogleAuth';
 import { getRedirectUri, SCOPES } from '../auth';
 import { ensureDefaults } from '../settings';
 import GoogleWidgetSettings from './WidgetSettings';
-import DriveOptions from '../drive/DriveOptions';
 import { describeError } from '../components/ConnectPrompt';
 
 import '../google.scss';
@@ -210,7 +209,6 @@ const GoogleOptions = () => {
         </Row>
       )}
 
-      <DriveOptions />
       {auth && <GoogleWidgetSettings />}
 
       {/* One switch per card: the three can sit over very different wallpapers,

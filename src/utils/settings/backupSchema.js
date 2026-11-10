@@ -107,6 +107,8 @@ export function validateSettings(input) {
       throw new Error('The saved subscription currency is not valid.');
     if (['googleDriveMax', 'googleDriveRefresh'].includes(key) && !Number.isInteger(Number(value)))
       throw new Error(`The saved value for ${key} must be a whole number.`);
+    if (key === 'googleDriveView' && !['recent', 'starred', 'shared'].includes(value))
+      throw new Error('The saved Drive view is not valid.');
     const original = defaultValues[key];
     if ((original === 'true' || original === 'false') && !['true', 'false'].includes(value))
       throw new Error(`The saved value for ${key} must be on or off.`);

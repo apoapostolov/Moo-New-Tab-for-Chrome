@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import EventBus from 'utils/eventbus';
 import { listDriveFiles } from './driveService';
 
@@ -8,6 +8,7 @@ export default function useDriveFiles(auth, query) {
   const [page, setPage] = useState({ token: '' });
   const stamp = JSON.stringify([auth, query, revision]);
   const identity = useRef('');
+  const pendingPage = useRef('');
   const refreshMinutes = Math.max(5, Number(localStorage.getItem('googleDriveRefresh')) || 15);
   useEffect(() => {
     const sync = (category) => {
@@ -34,6 +35,7 @@ export default function useDriveFiles(auth, query) {
     const controller = new AbortController();
     const reset = identity.current !== stamp;
     identity.current = stamp;
+    if (reset) pendingPage.current = '';
     const token = reset ? '' : page.token;
     setResult((old) => ({
       ...old,
@@ -63,12 +65,21 @@ export default function useDriveFiles(auth, query) {
       .catch((error) => {
         if (!controller.signal.aborted)
           setResult((old) => ({ ...old, loading: false, error: error.message }));
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) pendingPage.current = '';
       });
     return () => controller.abort();
   }, [auth, stamp, query, page]);
+  const more = useCallback(() => {
+    const token = result.nextPageToken;
+    if (result.loading || result.error || !token || pendingPage.current === token) return;
+    pendingPage.current = token;
+    setPage({ token });
+  }, [result.loading, result.error, result.nextPageToken]);
   return {
     ...result,
     refresh: () => refresh((n) => n + 1),
-    more: () => setPage({ token: result.nextPageToken }),
+    more,
   };
 }

@@ -7,6 +7,10 @@
 - Google Drive: reopen recent, starred and shared files, search file names and browse folders with read-only metadata access. Configure it in Settings → Google; existing accounts reconnect to approve Drive access.
 - Subscriptions: track renewals, trials, cancellation deadlines and costs by currency, with local storage, Backups and a searchable service-logo catalogue.
 
+### Changed
+
+- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action.
+
 ## 1.0.2 — 9 November 2026; updated 10 November 2026
 
 ### Added

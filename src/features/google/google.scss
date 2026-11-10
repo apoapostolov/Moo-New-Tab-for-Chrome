@@ -829,3 +829,13 @@
     }
   }
 }
+
+.gwSegmented.gwWidgetSelector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-radius: 12px;
+
+  .gwSegment {
+    border-radius: 9px;
+  }
+}

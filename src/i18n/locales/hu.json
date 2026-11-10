@@ -1979,6 +1979,7 @@
     "subscriptions_error_changed": "This subscription changed in another tab. Close and reopen it before editing.",
     "subscriptions_error_damaged": "Saved subscriptions could not be read. Restore a valid backup to continue.",
     "subscriptions_error_limit": "Up to 200 subscriptions can be stored. Remove an old entry before adding another.",
-    "subscriptions_error_save": "The change could not be saved. Check the entry and available browser storage."
+    "subscriptions_error_save": "The change could not be saved. Check the entry and available browser storage.",
+    "drive_files": "Drive files"
   }
 }
