@@ -19,6 +19,7 @@ import AirQualityOptions from 'features/airquality/AirQualityOptions';
 import BookmarkOptions from 'features/bookmarks/BookmarkOptions';
 import GitHubOptions from 'features/github/GitHubOptions';
 import PlanningOptions from 'features/planning/PlanningOptions';
+import SubscriptionOptions from 'features/subscriptions/SubscriptionOptions';
 import { Stats } from 'features/stats';
 import {
   About,
@@ -62,6 +63,7 @@ const sections = [
     component: NavbarOptions,
   },
   // Optional widgets and productivity tools.
+  { label: 'ui.subscriptions_title', name: 'subscriptions', component: SubscriptionOptions },
   { label: 'ui.planning_title', name: 'planning', component: PlanningOptions },
   { label: 'ui.focus_title', name: 'focus', component: FocusOptions },
   { label: 'ui.habits_title', name: 'habits', component: HabitOptions },

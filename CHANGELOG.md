@@ -1,5 +1,12 @@
 # Moo changelog
 
+## Unreleased
+
+### Added
+
+- Google Drive: reopen recent, starred and shared files, search file names and browse folders with read-only metadata access. Configure it in Settings → Google; existing accounts reconnect to approve Drive access.
+- Subscriptions: track renewals, trials, cancellation deadlines and costs by currency, with local storage, Backups and a searchable service-logo catalogue.
+
 ## 1.0.2 — 9 November 2026; updated 10 November 2026
 
 ### Added

@@ -12,6 +12,7 @@ import { useGoogleAuth } from '../hooks/useGoogleAuth';
 import { getRedirectUri, SCOPES } from '../auth';
 import { ensureDefaults } from '../settings';
 import GoogleWidgetSettings from './WidgetSettings';
+import DriveOptions from '../drive/DriveOptions';
 import { describeError } from '../components/ConnectPrompt';
 
 import '../google.scss';
@@ -22,6 +23,7 @@ const SERVICE_LABELS = {
   'https://www.googleapis.com/auth/calendar.calendarlist.readonly':
     'Calendar list, to pick which calendars show',
   'https://www.googleapis.com/auth/tasks': 'Tasks, read and write',
+  'https://www.googleapis.com/auth/drive.metadata.readonly': 'Drive file metadata, read only',
 };
 
 const CREDENTIALS_URL = 'https://console.cloud.google.com/apis/credentials';
@@ -98,7 +100,7 @@ const GoogleOptions = () => {
             }
             subtitle={
               redirectUri.includes('.chromiumapp.org')
-                ? 'In your own Google Cloud project, enable the Gmail, Calendar and Tasks APIs. Create an OAuth client of type Web application and add the redirect URI below to its Authorized redirect URIs.'
+                ? 'In your own Google Cloud project, enable the Gmail, Calendar, Tasks and Drive APIs. Create an OAuth client of type Web application and add the redirect URI below to its Authorized redirect URIs.'
                 : uiText('google_only_answers_apps_it_knows_about_and_m_283a79')
             }
           />
@@ -208,6 +210,7 @@ const GoogleOptions = () => {
         </Row>
       )}
 
+      <DriveOptions />
       {auth && <GoogleWidgetSettings />}
 
       {/* One switch per card: the three can sit over very different wallpapers,

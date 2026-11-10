@@ -16,7 +16,7 @@ import { WidgetTitleLink } from './WidgetTitleLink';
 export { WidgetTitleLink } from './WidgetTitleLink';
 
 export const openWidgetSettings = (widget) => {
-  updateHash(`#settings/${widget}`);
+  updateHash(`#settings/${widget === 'drive' ? 'google' : widget}`);
   EventBus.emit('modal', 'openMainModal');
 };
 

@@ -814,5 +814,41 @@
   {
     "name": "planningBudget",
     "value": 0
+  },
+  {
+    "name": "subscriptionsEnabled",
+    "value": false
+  },
+  {
+    "name": "surfaceSubscriptions",
+    "value": "classic"
+  },
+  {
+    "name": "subscriptionsData",
+    "value": "[]"
+  },
+  {
+    "name": "subscriptionsCurrency",
+    "value": "EUR"
+  },
+  {
+    "name": "subscriptionsRemoteIcons",
+    "value": true
+  },
+  {
+    "name": "googleDriveEnabled",
+    "value": false
+  },
+  {
+    "name": "surfaceDrive",
+    "value": "classic"
+  },
+  {
+    "name": "googleDriveMax",
+    "value": 10
+  },
+  {
+    "name": "googleDriveRefresh",
+    "value": 15
   }
 ]

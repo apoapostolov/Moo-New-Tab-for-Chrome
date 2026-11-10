@@ -27,6 +27,7 @@ export const SCOPES = [
   'https://www.googleapis.com/auth/calendar.events',
   'https://www.googleapis.com/auth/calendar.calendarlist.readonly',
   'https://www.googleapis.com/auth/tasks',
+  'https://www.googleapis.com/auth/drive.metadata.readonly',
 ];
 
 const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -190,14 +191,10 @@ let connecting;
 const connectWithLock = () => {
   if (!globalThis.navigator?.locks) return connectUnlocked();
 
-  return navigator.locks.request(
-    'moo-google-web-auth-flow',
-    { ifAvailable: true },
-    (lock) => {
-      if (!lock) throw new Error('AUTH_FLOW_IN_PROGRESS');
-      return connectUnlocked();
-    },
-  );
+  return navigator.locks.request('moo-google-web-auth-flow', { ifAvailable: true }, (lock) => {
+    if (!lock) throw new Error('AUTH_FLOW_IN_PROGRESS');
+    return connectUnlocked();
+  });
 };
 
 export const connect = () => {

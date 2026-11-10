@@ -2,6 +2,7 @@ import { validCountdown } from '../../features/countdown/countdownStore';
 import { validHabits } from '../../features/habits/habitStore';
 import { validNoteMemories } from '../../features/scratch/noteTypes';
 import { validTimezone } from '../../features/time/worldClockStore';
+import { validSubscriptions } from '../../features/subscriptions/subscriptionSchema';
 import { validPlanning } from '../../features/planning';
 export const record = (value) => value && typeof value === 'object' && !Array.isArray(value);
 export const text = (value) => typeof value === 'string';
@@ -21,6 +22,7 @@ const point = (value) =>
   record(value) && text(value.id) && Number.isFinite(value.x) && Number.isFinite(value.y);
 export const validators = {
   planningData: validPlanning,
+  subscriptionsData: validSubscriptions,
   habitsData: (value) => validHabits(value),
   countdowns: (value) =>
     Array.isArray(value) &&

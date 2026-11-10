@@ -90,6 +90,18 @@ export const WIDGETS = [
   },
   { id: 'habits', label: () => uiText('habits_title'), setting: 'habitsEnabled', zone: 'center' },
   {
+    id: 'subscriptions',
+    label: () => uiText('subscriptions_title'),
+    setting: 'subscriptionsEnabled',
+    zone: 'center',
+  },
+  {
+    id: 'drive',
+    label: () => uiText('drive_title'),
+    setting: 'googleDriveEnabled',
+    zone: 'center',
+  },
+  {
     id: 'planning',
     label: () => uiText('planning_title'),
     setting: 'planningEnabled',
@@ -125,6 +137,8 @@ export const DEFAULT_ORDER = [
   'mail',
   'calendar',
   'tasks',
+  'drive',
+  'subscriptions',
   'portfolio',
   'countdown',
   'planning',

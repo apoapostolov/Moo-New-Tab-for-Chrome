@@ -1,4 +1,5 @@
 import { record, validators, list, media, text } from './backupValidators';
+import { validCurrency } from '../../features/subscriptions/subscriptionSchema';
 import defaults from '../data/default_settings.json';
 import supportedKeys from '../data/settings_keys.json';
 
@@ -45,6 +46,8 @@ const allowed = new Set(supportedKeys);
 const defaultValues = Object.fromEntries(defaults.map(({ name, value }) => [name, String(value)]));
 const numbers = {
   planningBudget: [0, 1440],
+  googleDriveMax: [5, 30],
+  googleDriveRefresh: [5, 1440],
   habitsLimit: [1, 30],
   habitsWeekStart: [0, 1],
   bookmarksLimit: [3, 12],
@@ -100,6 +103,10 @@ export function validateSettings(input) {
         : 1024 * 1024)
     )
       throw new Error(`The saved value for ${key} is too large.`);
+    if (key === 'subscriptionsCurrency' && !validCurrency(value))
+      throw new Error('The saved subscription currency is not valid.');
+    if (['googleDriveMax', 'googleDriveRefresh'].includes(key) && !Number.isInteger(Number(value)))
+      throw new Error(`The saved value for ${key} must be a whole number.`);
     const original = defaultValues[key];
     if ((original === 'true' || original === 'false') && !['true', 'false'].includes(value))
       throw new Error(`The saved value for ${key} must be on or off.`);

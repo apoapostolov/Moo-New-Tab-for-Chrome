@@ -8,6 +8,8 @@ const SURFACE_SETTINGS = {
   bookmarks: 'surfaceBookmarks',
   habits: 'surfaceHabits',
   planning: 'surfacePlanning',
+  subscriptions: 'surfaceSubscriptions',
+  drive: 'surfaceDrive',
   airquality: 'surfaceAirQuality',
   github: 'surfaceGithub',
   weather: 'surfaceWeather',

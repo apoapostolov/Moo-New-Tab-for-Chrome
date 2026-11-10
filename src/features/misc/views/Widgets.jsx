@@ -36,6 +36,8 @@ const Habits = lazy(() => import('../../habits/Habits'));
 const AirQuality = lazy(() => import('../../airquality/AirQuality'));
 const Bookmarks = lazy(() => import('../../bookmarks/Bookmarks'));
 const GitHub = lazy(() => import('../../github/GitHub'));
+const Subscriptions = lazy(() => import('../../subscriptions/Subscriptions'));
+const GoogleDrive = lazy(() => import('../../google/drive/GoogleDrive'));
 const Planning = lazy(() => import('../../planning/Planning'));
 
 /**
@@ -58,6 +60,8 @@ const Widgets = () => {
   const enabled = (id) => isWidgetEnabled(id, profile);
 
   const widgets = {
+    subscriptions: enabled('subscriptions') ? <Subscriptions /> : null,
+    drive: enabled('drive') ? <GoogleDrive /> : null,
     planning: enabled('planning') ? <Planning /> : null,
     bookmarks: enabled('bookmarks') ? <Bookmarks /> : null,
     habits: enabled('habits') ? <Habits /> : null,

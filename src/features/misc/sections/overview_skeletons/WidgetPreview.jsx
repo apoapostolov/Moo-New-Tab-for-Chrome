@@ -25,6 +25,8 @@ export const WIDGET_PREVIEWS = {
   countdown: null,
   habits: null,
   planning: null,
+  drive: null,
+  subscriptions: null,
   airquality: null,
   github: null,
   bookmarks: null,

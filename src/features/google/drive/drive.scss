@@ -1,0 +1,135 @@
+@use 'scss/variables' as *;
+
+.driveWidget {
+  min-width: 0;
+  text-align: left;
+}
+
+.light .driveWidget.glassSurface.glassSurface {
+  background: rgb(255 255 255 / 82%);
+}
+
+.driveTabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 0 10px;
+
+  button {
+    flex: 1;
+    padding: 6px 3px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  [aria-pressed='true'] {
+    background: color-mix(in srgb, currentcolor 12%, transparent);
+    font-weight: 600;
+  }
+}
+
+.driveSearch {
+  display: flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, currentcolor 22%, transparent);
+  border-radius: 7px;
+  margin-bottom: 8px;
+
+  input {
+    width: 0;
+    flex: 1;
+    min-width: 0;
+    padding: 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 12px;
+
+    &::placeholder {
+      color: inherit;
+      opacity: 0.65;
+    }
+  }
+}
+
+.driveFiles {
+  max-height: 330px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.driveEntry {
+  padding: 7px 0;
+  border-bottom: 1px solid color-mix(in srgb, currentcolor 8%, transparent);
+}
+
+.driveFile {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  svg {
+    flex-shrink: 0;
+    font-size: 17px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.driveMeta {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 0 24px;
+  font-size: 10px;
+  opacity: 0.65;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  time {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
+.driveBack {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  margin-bottom: 6px;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
