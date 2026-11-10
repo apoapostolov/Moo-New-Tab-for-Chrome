@@ -7,6 +7,7 @@
 const SURFACE_SETTINGS = {
   bookmarks: 'surfaceBookmarks',
   habits: 'surfaceHabits',
+  planning: 'surfacePlanning',
   airquality: 'surfaceAirQuality',
   github: 'surfaceGithub',
   weather: 'surfaceWeather',

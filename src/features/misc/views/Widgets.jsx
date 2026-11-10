@@ -36,6 +36,7 @@ const Habits = lazy(() => import('../../habits/Habits'));
 const AirQuality = lazy(() => import('../../airquality/AirQuality'));
 const Bookmarks = lazy(() => import('../../bookmarks/Bookmarks'));
 const GitHub = lazy(() => import('../../github/GitHub'));
+const Planning = lazy(() => import('../../planning/Planning'));
 
 /**
  * A rail each side and the middle column; Overview decides which. The middle splits in two only
@@ -57,6 +58,7 @@ const Widgets = () => {
   const enabled = (id) => isWidgetEnabled(id, profile);
 
   const widgets = {
+    planning: enabled('planning') ? <Planning /> : null,
     bookmarks: enabled('bookmarks') ? <Bookmarks /> : null,
     habits: enabled('habits') ? <Habits /> : null,
     airquality: enabled('airquality') ? <AirQuality /> : null,

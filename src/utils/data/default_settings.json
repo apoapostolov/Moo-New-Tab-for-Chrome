@@ -798,5 +798,21 @@
   {
     "name": "focusWidgetPlacement",
     "value": "{}"
+  },
+  {
+    "name": "planningEnabled",
+    "value": false
+  },
+  {
+    "name": "surfacePlanning",
+    "value": "classic"
+  },
+  {
+    "name": "planningData",
+    "value": "[]"
+  },
+  {
+    "name": "planningBudget",
+    "value": 0
   }
 ]

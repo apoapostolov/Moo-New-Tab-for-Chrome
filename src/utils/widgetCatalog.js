@@ -90,6 +90,12 @@ export const WIDGETS = [
   },
   { id: 'habits', label: () => uiText('habits_title'), setting: 'habitsEnabled', zone: 'center' },
   {
+    id: 'planning',
+    label: () => uiText('planning_title'),
+    setting: 'planningEnabled',
+    zone: 'center',
+  },
+  {
     id: 'airquality',
     label: () => uiText('air_title'),
     setting: 'airQualityEnabled',
@@ -121,6 +127,7 @@ export const DEFAULT_ORDER = [
   'tasks',
   'portfolio',
   'countdown',
+  'planning',
   'habits',
   'airquality',
   'github',

@@ -1,9 +1,10 @@
 # Moo changelog
 
-## 1.0.2 — 9 November 2026
+## 1.0.2 — 9 November 2026; updated 10 November 2026
 
 ### Added
 
+- Planning: capture personal tasks for Today, Tomorrow or Later, type dates such as “tomorrow” and “in 3 days”, choose three daily priorities, estimate time and review unfinished plans. Tasks stay local, work offline and are included in Backups.
 - Widget layout: place widgets in the upper-left and upper-right corners as well as the lower corners and centre. Upper-right widgets appear above the navbar buttons.
 - Navbar: choose Classic or Glass styling for the navbar buttons in Settings → Navbar.
 

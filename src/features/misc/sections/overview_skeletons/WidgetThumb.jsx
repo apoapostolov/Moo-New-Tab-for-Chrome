@@ -9,6 +9,7 @@ import { memo } from 'react';
 export const THUMB_LAYOUT = {
   bookmarks: { icon: 'square', lines: ['wide', 'medium'] },
   habits: { icon: 'check', lines: ['wide', 'short'] },
+  planning: { icon: 'check', lines: ['wide', 'medium', 'short'] },
   airquality: { icon: 'weather', lines: ['medium', 'short'] },
   github: { icon: 'article', lines: ['wide', 'medium'] },
   mail: { icon: 'dot', lines: ['wide', 'medium'] },
