@@ -55,19 +55,6 @@ export default function Planning() {
           </button>
         ))}
       </div>
-      {date && (
-        <div className="planningDay">
-          <input
-            type="date"
-            aria-label={uiText('planning_pick_day')}
-            value={date}
-            onChange={(e) => {
-              if (e.target.value) setTab(e.target.value);
-            }}
-          />
-          <span>{uiText('planning_tasks_count', { count })}</span>
-        </div>
-      )}
       {damaged ? (
         <p role="alert" className="planningEmpty">
           {uiText('planning_error_damaged')}
@@ -75,6 +62,19 @@ export default function Planning() {
       ) : (
         <>
           <PlanningCapture {...{ date, today, change, pending }} />
+          {date && (
+            <div className="planningDay">
+              <input
+                type="date"
+                aria-label={uiText('planning_pick_day')}
+                value={date}
+                onChange={(e) => {
+                  if (e.target.value) setTab(e.target.value);
+                }}
+              />
+              <span>{uiText('planning_tasks_count', { count })}</span>
+            </div>
+          )}
           {date && planned > 0 && (
             <p className="planningSummary">
               {uiText(budget ? 'planning_budget_summary' : 'planning_time_summary', {
