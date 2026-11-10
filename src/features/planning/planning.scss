@@ -30,24 +30,6 @@
   }
 }
 
-.planningDay {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 10px 0;
-  font-size: 11px;
-
-  input {
-    min-width: 0;
-    max-width: 65%;
-    border: 0;
-    color: inherit;
-    background: transparent;
-    font-size: 12px;
-  }
-}
-
 .planningCaptureHeader {
   display: flex;
   align-items: center;
@@ -127,20 +109,6 @@
     margin-top: 3px;
     font-size: inherit;
   }
-}
-
-.planningWidget .planningDay input[type='date'] {
-  padding: 3px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  box-shadow: none;
-}
-
-.dark .planningDay input[type='date'] {
-  color-scheme: dark;
 }
 
 .light .planningWidget.glassSurface.glassSurface {

@@ -4,7 +4,7 @@ Planning is a local daily planner for personal tasks. Enable it in Settings → 
 
 ## Make a daily plan
 
-Add a task directly in the widget and press Enter. Today, Tomorrow and Later choose where a task goes when no date is typed. You can also choose a date to plan ahead or look back at completed tasks.
+Add a task directly in the widget and press Enter. Today, Tomorrow and Later choose where a task goes when no date is typed. Type a date in the capture field to plan a task ahead.
 
 The capture field understands the same English calendar-date grammar as Google Tasks. “Call Mum tomorrow” becomes a task called “Call Mum” planned for tomorrow. “Book tickets in 3 days” uses three calendar days from today, even when you are viewing a different day. The interpreted title and date appear before you add it. Weekdays and explicit dates also work. Put the whole title in double quotes to keep date words as literal text. Competing or invalid dates are not submitted.
 

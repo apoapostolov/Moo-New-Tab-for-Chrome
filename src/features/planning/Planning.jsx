@@ -23,7 +23,6 @@ export default function Planning() {
     .filter((item) => item.date === date)
     .reduce((sum, item) => sum + item.minutes, 0);
   const budget = planningBudget();
-  const count = items.filter((item) => item.date === date && !item.done).length;
   const format = (value) => new Intl.NumberFormat(language.replaceAll('_', '-')).format(value);
   const remove = async (task) => {
     const snapshot = {
@@ -62,19 +61,6 @@ export default function Planning() {
       ) : (
         <>
           <PlanningCapture {...{ date, today, change, pending }} />
-          {date && (
-            <div className="planningDay">
-              <input
-                type="date"
-                aria-label={uiText('planning_pick_day')}
-                value={date}
-                onChange={(e) => {
-                  if (e.target.value) setTab(e.target.value);
-                }}
-              />
-              <span>{uiText('planning_tasks_count', { count })}</span>
-            </div>
-          )}
           {date && planned > 0 && (
             <p className="planningSummary">
               {uiText(budget ? 'planning_budget_summary' : 'planning_time_summary', {
