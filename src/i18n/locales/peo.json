@@ -1868,7 +1868,7 @@
     "planning_priority_hint": "Choose up to three priorities for each day.",
     "planning_priorities": "Top priorities",
     "planning_rest": "Other plans",
-    "planning_empty_day": "Add a task, or choose something from Later. A small plan is enough.",
+    "planning_empty_day": "Add a task, or choose something from Later.",
     "planning_empty_later": "Keep ideas and tasks here until you are ready to plan them.",
     "planning_done_count": "Done ({count})",
     "planning_earlier_count": "Unfinished from earlier ({count})",
@@ -1899,6 +1899,9 @@
     "planning_history": "Completed plans",
     "planning_history_hint": "Completed tasks from all days will be deleted. Unfinished tasks are kept. This cannot be undone.",
     "planning_clear_completed": "Delete completed tasks ({count})",
-    "planning_confirm_clear": "Confirm delete ({count})"
+    "planning_confirm_clear": "Confirm delete ({count})",
+    "planning_natural_help_intro": "Type a task and an English date. The preview shows the title and planned day before you add it.",
+    "planning_natural_help_limit": "Planning reads dates. Add notes, time estimates and priorities in the task editor.",
+    "planning_natural_help_manual": "Without a date, the selected day or Later is used. Put the whole title in double quotes to keep date words as text."
   }
 }

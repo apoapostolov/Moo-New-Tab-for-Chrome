@@ -48,6 +48,15 @@
   }
 }
 
+.planningCaptureHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
 .planningCapture {
   display: flex;
   min-width: 0;

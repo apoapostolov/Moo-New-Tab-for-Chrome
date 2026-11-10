@@ -31,16 +31,18 @@ export default function NaturalHelp({ kind, editing }) {
     };
   }, [open]);
   const rows =
-    kind === 'task'
-      ? ['dates', 'notes', 'status']
-      : [
-          'dates',
-          'times',
-          'duration',
-          'location',
-          'notes',
-          ...(!editing ? ['repeat', 'calendar'] : []),
-        ];
+    kind === 'planning'
+      ? ['dates']
+      : kind === 'task'
+        ? ['dates', 'notes', 'status']
+        : [
+            'dates',
+            'times',
+            'duration',
+            'location',
+            'notes',
+            ...(!editing ? ['repeat', 'calendar'] : []),
+          ];
   return (
     <div
       className="gwNaturalHelp"
@@ -69,7 +71,7 @@ export default function NaturalHelp({ kind, editing }) {
         <MdHelpOutline aria-hidden="true" />
       </button>
       <div ref={panel} id={id} popover="manual" role="tooltip" className="gwNaturalHelpPanel">
-        <p>{uiText('natural_help_intro')}</p>
+        <p>{uiText(kind === 'planning' ? 'planning_natural_help_intro' : 'natural_help_intro')}</p>
         <dl>
           {rows.map((row) => (
             <div key={row}>
@@ -80,14 +82,18 @@ export default function NaturalHelp({ kind, editing }) {
         </dl>
         <p>
           {uiText(
-            kind === 'task'
-              ? 'natural_help_task_limit'
-              : editing
-                ? 'natural_help_event_edit_limit'
-                : 'natural_help_event_limit',
+            kind === 'planning'
+              ? 'planning_natural_help_limit'
+              : kind === 'task'
+                ? 'natural_help_task_limit'
+                : editing
+                  ? 'natural_help_event_edit_limit'
+                  : 'natural_help_event_limit',
           )}
         </p>
-        <p>{uiText('natural_help_manual')}</p>
+        <p>
+          {uiText(kind === 'planning' ? 'planning_natural_help_manual' : 'natural_help_manual')}
+        </p>
       </div>
     </div>
   );
