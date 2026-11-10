@@ -1,6 +1,6 @@
 # Moo changelog
 
-## Unreleased
+## 1.0.3 — unreleased
 
 ### Added
 
