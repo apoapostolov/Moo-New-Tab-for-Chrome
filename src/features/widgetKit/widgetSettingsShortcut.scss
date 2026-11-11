@@ -22,7 +22,7 @@
   padding-inline-end: 32px;
 }
 
-.widgetSettingsHost > .widgetSettingsShortcut {
+.widgetSettingsHost > .widgetSettingsMount > .widgetSettingsShortcut {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -37,4 +37,8 @@
 .widgetSettingsShortcut:focus-visible {
   outline: 2px solid currentcolor;
   outline-offset: 2px;
+}
+
+.widgetSettingsMount {
+  display: contents;
 }

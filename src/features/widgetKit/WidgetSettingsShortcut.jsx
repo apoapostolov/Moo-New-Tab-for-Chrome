@@ -16,6 +16,8 @@ export default function WidgetSettingsShortcut({ widget, children, enabled }) {
     if (!enabled) return undefined;
     const parent = marker.current.parentElement;
     let host;
+    const mount = document.createElement('span');
+    mount.className = 'widgetSettingsMount';
     const locate = () => {
       const root = marker.current.nextElementSibling;
       const valid = root && !root.hasAttribute('data-widget-marker');
@@ -24,9 +26,13 @@ export default function WidgetSettingsShortcut({ widget, children, enabled }) {
       if (host !== next) {
         host?.classList.remove('widgetSettingsHost');
         host = next;
-        if (host && !header) host.classList.add('widgetSettingsHost');
-        setTarget(next);
+        setTarget(mount);
       }
+      if (host && !header) host.classList.add('widgetSettingsHost');
+      // Text-only widgets can replace their content during refresh. Keep the
+      // portal's own mount intact and reattach it after that update.
+      if (host && mount.parentElement !== host) host.append(mount);
+      if (!host) mount.remove();
     };
     locate();
     const observer = new window.MutationObserver(locate);
@@ -34,6 +40,7 @@ export default function WidgetSettingsShortcut({ widget, children, enabled }) {
     return () => {
       observer.disconnect();
       host?.classList.remove('widgetSettingsHost');
+      mount.remove();
     };
   }, [enabled, widget]);
   const label = `${uiText('widget_settings')}: ${widgetById(widget)?.label() || widget}`;
