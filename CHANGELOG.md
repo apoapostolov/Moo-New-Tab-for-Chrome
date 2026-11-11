@@ -1,5 +1,11 @@
 # Moo changelog
 
+## Unreleased
+
+### Fixed
+
+- Widget layout: upper-corner stacks grow without a rail scrollbar. Quick mouse drops in Overview use the release position, including when the settings panel has scrolled, so widgets can move reliably between corners.
+
 ## 1.0.3 — 11 November 2026
 
 ### Added

@@ -12,6 +12,7 @@ import { Zone } from './OverviewZone';
 import { SLOT, widgetLabel } from './overviewLabels';
 import { fromRows, placeRows } from './overviewDrop';
 import { moveOverviewWithKeys } from './overviewKeyboard';
+import useOverviewPointer from './useOverviewPointer';
 import {
   WIDGETS,
   ZONES,
@@ -39,7 +40,7 @@ const OverviewLayout = ({ profile }) => {
   const [activeId, setActiveId] = useState(null);
   const [activeWidth, setActiveWidth] = useState(null);
   const [target, setTarget] = useState(null);
-  const pointer = useRef({ x: 0, y: 0 });
+  const { start: startPointer, read: readPointer, stop: stopPointer } = useOverviewPointer();
   const geometry = useRef(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -47,25 +48,25 @@ const OverviewLayout = ({ profile }) => {
   const findZone = useCallback((id) => ZONES.find((zone) => groups[zone].includes(id)), [groups]);
 
   const rowsFor = useCallback(
-    (zone, insert) => {
+    (zone, insert, destination = target, draggedId = activeId) => {
       const base = overviewRows(groups[zone], secondLane, zone)
-        .map((row) => row.filter((id) => id !== activeId))
+        .map((row) => row.filter((id) => id !== draggedId))
         .filter((row) => row.length > 0);
 
-      if (!target || target.zone !== zone) return base;
+      if (!destination || destination.zone !== zone) return base;
 
       const placed = placeRows({
         zone,
         rows: base,
         insert,
-        overId: target.overId,
-        side: target.side,
-        index: target.index,
-        insertWide: isFullWidth(activeId),
+        overId: destination.overId,
+        side: destination.side,
+        index: destination.index,
+        insertWide: isFullWidth(draggedId),
       });
       if (zone !== 'center') return placed;
       const wide = (row) =>
-        row.every((id) => (id === insert ? isFullWidth(activeId) : isFullWidth(id)));
+        row.every((id) => (id === insert ? isFullWidth(draggedId) : isFullWidth(id)));
       return [...placed.filter(wide), ...placed.filter((row) => !wide(row))];
     },
     [groups, secondLane, activeId, target],
@@ -76,36 +77,30 @@ const OverviewLayout = ({ profile }) => {
     setActiveWidth(null);
     setTarget(null);
     geometry.current = null;
-  }, []);
+    stopPointer();
+  }, [stopPointer]);
 
-  /**
-   * The pointer is followed directly, and the place it points at is read off the layout
-   * as it stood when the drag began. Nothing here depends on the layout the drag itself
-   * produces, so the target cannot flip back and forth.
-   */
-  const handleMove = (event) => {
-    const { activatorEvent, delta } = event;
-
-    if (activatorEvent?.clientX === undefined) return;
-
-    pointer.current = { x: activatorEvent.clientX + delta.x, y: activatorEvent.clientY + delta.y };
-
-    if (!geometry.current) geometry.current = captureGeometry();
-
-    const next = readTarget(geometry.current, pointer.current);
-
+  // Preview state may lag a fast release; always resolve the final drop from
+  // the captured native pointer position rather than the last rendered slot.
+  const currentTarget = () => {
+    const point = readPointer();
+    return geometry.current && point ? readTarget(geometry.current, point) : null;
+  };
+  const handleMove = () => {
+    const next = currentTarget();
     setTarget((current) => (sameTarget(current, next) ? current : next));
   };
 
-  const handleDragEnd = () => {
-    if (!activeId || !target) {
+  const handleDragEnd = ({ active }) => {
+    const id = active.id;
+    const destination = currentTarget();
+    if (!id || !destination || destination.overId === id) {
       clear();
-
       return;
     }
 
-    const from = findZone(activeId);
-    const to = target?.zone ?? from;
+    const from = findZone(id);
+    const to = destination.zone;
 
     if (!from || !to) {
       clear();
@@ -113,12 +108,12 @@ const OverviewLayout = ({ profile }) => {
       return;
     }
 
-    const center = fromRows(rowsFor('center', activeId));
-    const placed = to === 'center' ? center.ids : fromRows(rowsFor(to, activeId)).ids;
+    const center = fromRows(rowsFor('center', id, destination, id));
+    const placed = to === 'center' ? center.ids : fromRows(rowsFor(to, id, destination, id)).ids;
 
     setGroups((previous) => ({
       ...previous,
-      [from]: previous[from].filter((id) => id !== activeId),
+      [from]: previous[from].filter((widgetId) => widgetId !== id),
       center: center.ids,
       ...(to === 'center' ? {} : { [to]: placed }),
     }));
@@ -185,11 +180,12 @@ const OverviewLayout = ({ profile }) => {
     <>
       <DndContext
         sensors={sensors}
-        onDragStart={({ active }) => {
+        onDragStart={({ active, activatorEvent }) => {
           const node = document.querySelector(`[data-widget-id="${active.id}"]`);
           const box = node?.getBoundingClientRect();
 
           geometry.current = captureGeometry();
+          startPointer(activatorEvent, node);
           setActiveWidth(box ? box.width : null);
           setActiveId(active.id);
         }}

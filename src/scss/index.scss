@@ -67,7 +67,6 @@ body {
 
   top: var(--upper-widget-top);
   bottom: auto;
-  max-height: max(0px, calc(50dvh - var(--upper-widget-top) - 1rem));
 }
 
 .widgetRail-top-right {
@@ -618,11 +617,9 @@ body.hardTextShadow {
   }
 }
 
+// Upper stacks grow naturally instead of becoming half-screen scroll panes.
 .widgetRail.widgetRail-top-left,
 .widgetRail.widgetRail-top-right {
-  max-height: max(0px, calc(50dvh - var(--upper-widget-top) - 1rem));
-}
-
-.widgetRail.widgetRail-top-right {
-  max-height: max(0px, calc(50dvh - var(--navbar-height, 3rem) - 3rem));
+  max-height: none;
+  overflow: visible;
 }
