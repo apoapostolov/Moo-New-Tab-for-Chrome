@@ -1,21 +1,14 @@
 # Moo changelog
 
-## 1.0.3 — unreleased
+## 1.0.3 — 11 November 2026
 
 ### Added
 
-- Knowledge: discover Wikipedia articles or Wikimedia Commons images, filter by comma-separated subjects, and choose a new page per reload, per local day or every 1–168 hours. Includes thumbnails, source and subject in a compact two-line header, image credits, offline cached text and Classic/Glass styling.
-
-- Google Drive: reopen recent, starred and shared files, search file names and browse folders with read-only metadata access. Configure it in Settings → Google; existing accounts reconnect to approve Drive access.
-- Subscriptions: track renewals, trials, cancellation deadlines and costs by currency, with local storage, Backups and a searchable service-logo catalogue.
-
-### Changed
-
-- Misc: optionally show a settings button on every widget. The option is off by default, including on Knowledge.
-
-- Subscriptions: use compact two-line rows with bare service logos, centered totals and an Active/Cancelled control that keeps the changed row available for undo until the view changes. Convert prices and totals to a display currency using daily reference rates while retaining original billing amounts. Use a native renewal-date picker beside the cancellation notice, open linked entries in the current or a new tab, and preview notes on hover or keyboard focus.
-
-- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action by default. The file scrollbar appears while scrolling or focused and fades out when idle.
+- Knowledge: discover Wikipedia articles or Wikimedia Commons images, optionally filtered by comma-separated subjects. Choose a new page per reload, per local day or every 1–168 hours, with eight hours as the default. Source and subject appear beside the widget title; thumbnails, image credits, saved offline text and Classic/Glass styling are included.
+- Google Drive: search and reopen recent, starred and shared files or browse folders with read-only metadata access. Choose Drive in the four-service Widget settings selector under Settings → Google. The widget remembers its selected view, loads more files when scrolled to the bottom and sizes its list to Files per page. Its scrollbar fades when idle. Enable the Drive API in your Google Cloud project and reconnect Google to approve the new permission.
+- Subscriptions: track personal renewals, trials, costs and cancellation deadlines with a searchable service-logo catalogue. Choose renewal dates with the browser calendar and set the cancellation notice beside them. Compare costs in a display currency using daily reference rates while retaining original billing prices. Open saved management links in the current or a new tab and preview notes on hover or keyboard focus. Cancelled entries remain available for immediate undo until the view changes. Entries stay local and are included in Backups.
+- Planning: open Natural Format help beside the capture title field, with compact date examples and guidance matching the Tasks and Calendar help panels.
+- Misc: optionally show a settings button on every widget. The option is off by default; actions such as Refresh remain available independently.
 
 ## 1.0.2 — 9 November 2026; updated 10 November 2026
 

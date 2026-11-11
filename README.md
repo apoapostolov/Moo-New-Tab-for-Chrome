@@ -42,14 +42,14 @@ Moo opens directly in English with the time, Search/Ask Bar, basic weather in th
 - Backgrounds: use local pictures, stock photos, video clips or live channels. Some sources need a free API key. While a video is playing, triple-click the page to hide the widgets; triple-click again or press Escape to return.
 - Backups: export your setup under Settings → Advanced, including uploaded pictures if you choose. Imports show a preview before applying, and sign-in credentials stay out of the backup.
 
-Settings, notes, habit progress and uploaded pictures are stored in your browser. Weather, Air Quality, GitHub, Bookmarks, backgrounds, feeds and connected Google widgets contact their respective services; [Data and connections](docs/PRIVACY.md) explains what goes where.
+Settings, notes, habit progress and uploaded pictures are stored in your browser. Weather, Air Quality, GitHub, Bookmarks, backgrounds, feeds, Knowledge, Subscriptions and connected Google widgets contact their respective services; [Data and connections](docs/PRIVACY.md) explains what goes where.
 
 ## Installation
 
-Build Moo from source with the developer instructions below, then install it from the files without using the Chrome Web Store:
+Download [Moo 1.0.3 for Chrome](https://github.com/apoapostolov/Moo-New-Tab-for-Chrome/releases/tag/v1.0.3) and extract `chrome-1.0.3.zip`, or build from source with the developer instructions below:
 
 1. Open `chrome://extensions` and enable **Developer mode**.
-2. Choose **Load unpacked** and select `build/chrome`.
+2. Choose **Load unpacked** and select the extracted directory, or `build/chrome` when building from source.
 3. Open a new tab and confirm Chrome's new-tab change prompt if shown.
 
 The build also creates `build/chrome-<version>.zip`. Keep the unpacked directory at the same path for future browser sessions. Google widgets use a Web application OAuth client with the exact redirect displayed in Settings → Google.

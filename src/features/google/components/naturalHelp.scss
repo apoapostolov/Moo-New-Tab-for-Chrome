@@ -35,7 +35,11 @@
   border-radius: 12px;
   box-shadow: 0 12px 32px rgb(0 0 0 / 28%);
   font-size: 11.5px;
+  font-weight: 400;
   line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -50,6 +54,8 @@
 
   > p {
     margin: 0 0 10px;
+    font-size: inherit;
+    line-height: inherit;
   }
 
   > p:last-child {
