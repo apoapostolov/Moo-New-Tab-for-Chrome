@@ -351,5 +351,7 @@
   "zoomQuicklinks",
   "zoomWeather",
   "subscriptionsLinkTarget",
-  "widgetSettingsButtons"
+  "widgetSettingsButtons",
+  "widgetCenterColumns",
+  "focusWidgetCenterColumns"
 ]

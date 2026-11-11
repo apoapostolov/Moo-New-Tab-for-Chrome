@@ -1,18 +1,17 @@
 import { uiText } from 'lib/translations';
 import { useTranslationVersion } from 'contexts/TranslationContext';
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MdOutlineDragIndicator } from 'react-icons/md';
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 import variables from 'config/variables';
 import { overviewRows } from './overviewLayout';
 import { captureGeometry, readTarget, sameTarget } from './overviewGeometry';
-import OverviewPreview from './OverviewPreview';
-import { Zone } from './OverviewZone';
-import { SLOT, widgetLabel } from './overviewLabels';
+import { SLOT } from './overviewLabels';
 import { fromRows, placeRows } from './overviewDrop';
 import { moveOverviewWithKeys } from './overviewKeyboard';
 import useOverviewPointer from './useOverviewPointer';
+import useOverviewColumns from './useOverviewColumns';
+import OverviewBoard from './OverviewBoard';
 import {
   WIDGETS,
   ZONES,
@@ -37,6 +36,7 @@ const OverviewLayout = ({ profile }) => {
     groupByZone(readOrder(profile), readPlacement(profile)),
   );
   const [secondLane, setSecondLane] = useState(() => readSecondLane(profile));
+  const centerColumns = useOverviewColumns(profile, groups.center, secondLane, setSecondLane);
   const [activeId, setActiveId] = useState(null);
   const [activeWidth, setActiveWidth] = useState(null);
   const [target, setTarget] = useState(null);
@@ -49,7 +49,7 @@ const OverviewLayout = ({ profile }) => {
 
   const rowsFor = useCallback(
     (zone, insert, destination = target, draggedId = activeId) => {
-      const base = overviewRows(groups[zone], secondLane, zone)
+      const base = overviewRows(groups[zone], centerColumns.lane, zone)
         .map((row) => row.filter((id) => id !== draggedId))
         .filter((row) => row.length > 0);
 
@@ -69,7 +69,7 @@ const OverviewLayout = ({ profile }) => {
         row.every((id) => (id === insert ? isFullWidth(draggedId) : isFullWidth(id)));
       return [...placed.filter(wide), ...placed.filter((row) => !wide(row))];
     },
-    [groups, secondLane, activeId, target],
+    [groups, centerColumns.lane, activeId, target],
   );
 
   const clear = useCallback(() => {
@@ -111,6 +111,7 @@ const OverviewLayout = ({ profile }) => {
     const center = fromRows(rowsFor('center', id, destination, id));
     const placed = to === 'center' ? center.ids : fromRows(rowsFor(to, id, destination, id)).ids;
 
+    if (to === 'center' && !isFullWidth(id)) centerColumns.manual();
     setGroups((previous) => ({
       ...previous,
       [from]: previous[from].filter((widgetId) => widgetId !== id),
@@ -136,7 +137,15 @@ const OverviewLayout = ({ profile }) => {
     setGroups((previous) => ({ ...previous }));
   };
 
-  const moveWithKeys = (id, key, shift) =>
+  const moveWithKeys = (id, key, shift) => {
+    if (
+      !activeId &&
+      !isFullWidth(id) &&
+      shift &&
+      findZone(id) === 'center' &&
+      ['ArrowLeft', 'ArrowRight'].includes(key)
+    )
+      centerColumns.manual();
     moveOverviewWithKeys({
       id,
       key,
@@ -146,6 +155,7 @@ const OverviewLayout = ({ profile }) => {
       setGroups,
       setSecondLane,
     });
+  };
 
   // Persists on every change: order, the zone each widget sits in, and the middle lane.
   useEffect(() => {
@@ -193,67 +203,19 @@ const OverviewLayout = ({ profile }) => {
         onDragEnd={handleDragEnd}
         onDragCancel={clear}
       >
-        <div className="overviewZones">
-          {ZONES.filter((zone) => zone !== 'center').map((zone) => (
-            <div key={zone} className={`overviewSide overviewSide-${zone}`}>
-              <Zone
-                zone={zone}
-                rows={columns[zone]}
-                onToggle={toggleEnabled}
-                onMove={moveWithKeys}
-                isEnabled={(id) => isWidgetEnabled(id, profile)}
-                activeId={activeId}
-                slotOpen={target?.zone === zone && target.overId === null}
-                slotWide={slotWide}
-              />
-            </div>
-          ))}
-
-          <div className="overviewPreview">
-            <span className="zoneTitle">
-              {variables.getMessage('modals.welcome.buttons.preview')}
-            </span>
-            <div className="tabPreview">
-              {ZONES.map((zone) => (
-                <Fragment key={zone}>
-                  <OverviewPreview
-                    zone={zone}
-                    groups={groups}
-                    profile={profile}
-                    secondLane={secondLane}
-                  />
-                </Fragment>
-              ))}
-            </div>
-          </div>
-
-          <div className="overviewBelow">
-            <Zone
-              zone="center"
-              rows={columns.center}
-              onToggle={toggleEnabled}
-              onMove={moveWithKeys}
-              isEnabled={(id) => isWidgetEnabled(id, profile)}
-              activeId={activeId}
-              slotOpen={target?.zone === 'center' && target.overId === null}
-              slotWide={slotWide}
-            />
-          </div>
-        </div>
-
-        <DragOverlay dropAnimation={null}>
-          {activeId ? (
-            <div
-              className="zoneCard dragCard"
-              style={activeWidth ? { width: activeWidth } : undefined}
-            >
-              <span className="dragHandle">
-                <MdOutlineDragIndicator />
-              </span>
-              <span className="zoneCardLabel">{widgetLabel(activeId)}</span>
-            </div>
-          ) : null}
-        </DragOverlay>
+        <OverviewBoard
+          columns={columns}
+          groups={groups}
+          profile={profile}
+          centerColumns={centerColumns}
+          onToggle={toggleEnabled}
+          onMove={moveWithKeys}
+          isEnabled={(id) => isWidgetEnabled(id, profile)}
+          activeId={activeId}
+          slotWide={slotWide}
+          target={target}
+          activeWidth={activeWidth}
+        />
       </DndContext>
     </>
   );

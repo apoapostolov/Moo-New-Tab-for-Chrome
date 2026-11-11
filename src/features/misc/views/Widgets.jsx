@@ -18,6 +18,7 @@ import {
   isFullWidth,
 } from 'utils/widgets';
 
+import { readCenterColumns, centerSecondLane } from 'utils/widgetColumns';
 import EventBus from 'utils/eventbus';
 import WidgetSettingsShortcut from 'features/widgetKit/WidgetSettingsShortcut';
 import useFocusWorkspace from 'features/focus/useFocusWorkspace';
@@ -134,8 +135,9 @@ const Widgets = () => {
   const cards = shown.filter((id) => !isFullWidth(id));
 
   // An empty lane is not a column: the split only exists once a card is moved in.
-  const secondColumn = cards.filter((id) => layout.lane.includes(id));
-  const firstColumn = cards.filter((id) => !layout.lane.includes(id));
+  const lane = centerSecondLane(cards, layout.lane, readCenterColumns(profile));
+  const secondColumn = cards.filter((id) => lane.includes(id));
+  const firstColumn = cards.filter((id) => !lane.includes(id));
   const split = secondColumn.length > 0;
 
   const middle = (

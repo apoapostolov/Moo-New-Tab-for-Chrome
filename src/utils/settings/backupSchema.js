@@ -107,6 +107,11 @@ export function validateSettings(input) {
         : 1024 * 1024)
     )
       throw new Error(`The saved value for ${key} is too large.`);
+    if (
+      ['widgetCenterColumns', 'focusWidgetCenterColumns'].includes(key) &&
+      !['auto', '1', '2'].includes(value)
+    )
+      throw new Error('The saved center column layout is not valid.');
     if (key === 'subscriptionsLinkTarget' && !['_blank', '_self'].includes(value))
       throw new Error('The saved subscription link target is not valid.');
     if (key === 'subscriptionsCurrency' && !validCurrency(value))

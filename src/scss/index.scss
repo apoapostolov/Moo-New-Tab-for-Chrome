@@ -63,14 +63,10 @@ body {
 
 .widgetRail-top-left,
 .widgetRail-top-right {
-  --upper-widget-top: 5rem;
+  --upper-widget-top: 1rem;
 
   top: var(--upper-widget-top);
   bottom: auto;
-}
-
-.widgetRail-top-right {
-  --upper-widget-top: 1rem;
 }
 
 body:has(.widgetRail-top-left > *) .widgetRail-left,

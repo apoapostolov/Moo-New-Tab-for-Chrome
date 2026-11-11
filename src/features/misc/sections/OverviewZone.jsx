@@ -54,10 +54,28 @@ const Slot = ({ label, wide }) => (
  */
 const Gap = () => <div className="dropGap" />;
 
-export const Zone = ({ zone, rows, onToggle, onMove, isEnabled, activeId, slotOpen, slotWide }) => {
+export const Zone = ({
+  zone,
+  rows,
+  onToggle,
+  onMove,
+  isEnabled,
+  activeId,
+  slotOpen,
+  slotWide,
+  columnControl,
+}) => {
   useTranslationVersion();
   // Only the middle column needs lines between rows: on a rail the halves of a card
   // already mean before and after.
+  const wide = (items) => items.every((id) => (id === SLOT ? slotWide : isFullWidth(id)));
+  const dividerAt = rows.findIndex((row) => !wide(row));
+  const divider = (
+    <div className="zoneSectionDivider">
+      <hr />
+      {columnControl}
+    </div>
+  );
   const gaps = zone === 'center' && activeId !== null;
 
   return (
@@ -65,6 +83,7 @@ export const Zone = ({ zone, rows, onToggle, onMove, isEnabled, activeId, slotOp
       <span className="zoneTitle">{zoneTitle(zone)}</span>
 
       <div className="zoneCards">
+        {zone === 'center' && rows.length === 0 && columnControl ? divider : null}
         {rows.length === 0 ? (
           <span className={`dropSlot${slotOpen ? ' dropSlotOver' : ''}`}>
             <span className="dropSlotLabel">{uiText('drop_a_widget_here_94afdc')}</span>
@@ -73,12 +92,10 @@ export const Zone = ({ zone, rows, onToggle, onMove, isEnabled, activeId, slotOp
 
         {rows.map((row, index) => {
           const key = row.find((id) => id !== SLOT) || `slot-${zone}`;
-          const wide = (items) => items.every((id) => (id === SLOT ? slotWide : isFullWidth(id)));
-          const divider = zone === 'center' && index > 0 && wide(rows[index - 1]) && !wide(row);
 
           return (
             <Fragment key={key}>
-              {divider && <hr className="zoneSectionDivider" />}
+              {zone === 'center' && index === dividerAt ? divider : null}
               {gaps ? <Gap /> : null}
 
               <div className={`zoneRow${row.length === 1 ? ' isSingle' : ''}`}>
@@ -101,6 +118,7 @@ export const Zone = ({ zone, rows, onToggle, onMove, isEnabled, activeId, slotOp
           );
         })}
 
+        {zone === 'center' && rows.length > 0 && dividerAt < 0 && columnControl ? divider : null}
         {gaps && rows.length ? <Gap /> : null}
       </div>
     </div>

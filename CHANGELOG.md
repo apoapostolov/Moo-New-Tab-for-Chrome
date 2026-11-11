@@ -1,5 +1,15 @@
 # Moo changelog
 
+## Unreleased
+
+### Added
+
+- Widget layout: choose one or two columns for the central card widgets with a compact switch beside the Overview separator. Standard and Focus layouts remember their choices independently.
+
+### Fixed
+
+- Widget layout: upper-left widgets start at the top margin independently of the upper-right navbar and widget stack.
+
 ## 1.0.4 — 12 November 2026 (prerelease)
 
 ### Fixed

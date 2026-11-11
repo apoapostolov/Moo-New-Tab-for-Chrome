@@ -890,5 +890,13 @@
   {
     "name": "widgetSettingsButtons",
     "value": false
+  },
+  {
+    "name": "widgetCenterColumns",
+    "value": "auto"
+  },
+  {
+    "name": "focusWidgetCenterColumns",
+    "value": "auto"
   }
 ]

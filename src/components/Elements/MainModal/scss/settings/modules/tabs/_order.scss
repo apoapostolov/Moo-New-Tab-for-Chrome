@@ -529,8 +529,16 @@
   align-self: center;
   width: calc(50% - (var(--card-gap) / 2));
   margin: 6px 0;
-  border: 0;
-  border-top: 1px solid color-mix(in srgb, currentcolor 22%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  hr {
+    flex: 1;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, currentcolor 22%, transparent);
+  }
 }
 
 /* A row is a pair in the middle column and a single card on the rails. */
@@ -1029,4 +1037,48 @@
   font-size: 13px;
   line-height: 1.5;
   opacity: 0.7;
+}
+
+.overviewColumnsSwitch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid color-mix(in srgb, currentcolor 18%, transparent);
+  border-radius: 6px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 32px;
+    min-height: 24px;
+    padding: 2px 4px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  [aria-pressed='true'] {
+    background: color-mix(in srgb, currentcolor 15%, transparent);
+  }
+
+  button:focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: 1px;
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }

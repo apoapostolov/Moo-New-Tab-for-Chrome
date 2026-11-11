@@ -1,7 +1,14 @@
 import WidgetPreview from './overview_skeletons/WidgetPreview';
 import { isWidgetEnabled, isFullWidth } from 'utils/widgets';
+import { centerSecondLane } from 'utils/widgetColumns';
 import { widgetLabel } from './overviewLabels';
-export default function OverviewPreview({ zone, groups, profile, secondLane }) {
+export default function OverviewPreview({
+  zone,
+  groups,
+  profile,
+  secondLane,
+  columnMode = 'auto',
+}) {
   const previewItem = (id) => <WidgetPreview id={id} label={widgetLabel(id)} />;
 
   // `wide` for the lines that read across the middle column: two cards wide, as on the page.
@@ -20,8 +27,13 @@ export default function OverviewPreview({ zone, groups, profile, secondLane }) {
   const previewZone = () => {
     const items = previewItems(zone);
 
+    const lane = centerSecondLane(
+      items.map(({ id }) => id),
+      secondLane,
+      columnMode,
+    );
     // One column until something sits in the second.
-    if (zone !== 'center' || secondLane.length === 0) {
+    if (zone !== 'center' || lane.length === 0) {
       return (
         <div className={`previewZone previewZone-${zone}`}>
           {items.map((item) => previewCard(item, isFullWidth(item.id)))}
@@ -29,7 +41,7 @@ export default function OverviewPreview({ zone, groups, profile, secondLane }) {
       );
     }
 
-    const inSecond = (id) => secondLane.includes(id);
+    const inSecond = (id) => lane.includes(id);
     const lines = items.filter(({ id }) => isFullWidth(id));
     const first = items.filter(({ id }) => !isFullWidth(id) && !inSecond(id));
     const second = items.filter(({ id }) => !isFullWidth(id) && inSecond(id));
