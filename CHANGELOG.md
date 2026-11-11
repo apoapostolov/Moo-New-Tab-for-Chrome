@@ -1,10 +1,11 @@
 # Moo changelog
 
-## Unreleased
+## 1.0.4 — 12 November 2026 (prerelease)
 
 ### Fixed
 
-- Widget layout: upper-corner stacks grow without a rail scrollbar. Quick mouse drops in Overview use the release position, including when the settings panel has scrolled, so widgets can move reliably between corners.
+- Widget layout: upper-left and upper-right stacks grow naturally instead of being limited to half the viewport and forcing a rail scrollbar. Widget lists retain their own scrolling behavior.
+- Widget layout: quick mouse drops in Overview use the final pointer position, including settings-panel scrolling. Planning, Subscriptions and other widgets can move between corners without snapping back to an earlier preview target. Cancelled drags preserve placement, and Standard and Focus layouts stay independent.
 
 ## 1.0.3 — 11 November 2026
 

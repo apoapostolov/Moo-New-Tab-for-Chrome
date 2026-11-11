@@ -9,7 +9,7 @@
   "homepage": "https://github.com/apoapostolov/Moo-New-Tab-for-Chrome#readme",
   "bugs": "https://github.com/apoapostolov/Moo-New-Tab-for-Chrome/issues",
   "license": "BSD-3-Clause",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "packageManager": "bun@1.3.1",
   "engines": {

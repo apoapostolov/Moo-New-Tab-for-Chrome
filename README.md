@@ -54,6 +54,8 @@ Download [Moo 1.0.3 for Chrome](https://github.com/apoapostolov/Moo-New-Tab-for-
 
 The build also creates `build/chrome-<version>.zip`. Keep the unpacked directory at the same path for future browser sessions. Google widgets use a Web application OAuth client with the exact redirect displayed in Settings → Google.
 
+To test the Widget layout fixes, download the [1.0.4 prerelease for Chrome](https://github.com/apoapostolov/Moo-New-Tab-for-Chrome/releases/tag/v1.0.4) and use the same installation steps with `chrome-1.0.4.zip`.
+
 ## Developer installation for agents
 
 Use Node 22 and Bun 1.3.1. Clone this repository, install its dependencies and build the extension:
