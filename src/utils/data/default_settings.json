@@ -882,5 +882,13 @@
   {
     "name": "knowledgeSubjects",
     "value": ""
+  },
+  {
+    "name": "subscriptionsLinkTarget",
+    "value": "_blank"
+  },
+  {
+    "name": "widgetSettingsButtons",
+    "value": false
   }
 ]

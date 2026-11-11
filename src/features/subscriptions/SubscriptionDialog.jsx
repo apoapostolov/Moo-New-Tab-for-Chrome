@@ -2,9 +2,10 @@ import { useId, useState } from 'react';
 import { uiText } from 'lib/translations';
 import Dialog from '../google/components/Dialog';
 import { currencyDigits, parseAmount, safeManageUrl, validCurrency } from './subscriptionSchema';
-import { localDay, parseSubscriptionDay } from './subscriptionDates';
+import { localDay, validDay } from './subscriptionDates';
 import { saveSubscription, removeSubscription } from './subscriptionActions';
 import SubscriptionFields from './SubscriptionFields';
+import { subscriptionLinkProps } from './subscriptionLinks';
 
 export default function SubscriptionDialog({ item, change, pending, error, onClose }) {
   const id = useId();
@@ -28,7 +29,8 @@ export default function SubscriptionDialog({ item, change, pending, error, onClo
     setDraft((old) => ({ ...old, [key]: value }));
     setInvalid(false);
   };
-  const date = parseSubscriptionDay(when);
+  const date = validDay(when) ? when : null;
+  const manageLink = subscriptionLinkProps(item?.url);
   const save = async (event) => {
     event.preventDefault();
     const amount = parseAmount(draft.price, draft.currency);
@@ -67,11 +69,11 @@ export default function SubscriptionDialog({ item, change, pending, error, onClo
                 else if (await change((items) => removeSubscription(items, item))) onClose();
               }}
             >
-              {uiText(armed ? 'subscriptions_confirm_delete' : 'planning_delete')}
+              {uiText(armed ? 'subscriptions_confirm_delete' : 'subscriptions_delete')}
             </button>
           )}
-          {item?.url && (
-            <a className="gwButton" href={item.url} target="_blank" rel="noopener noreferrer">
+          {manageLink && (
+            <a className="gwButton" {...manageLink}>
               {uiText('subscriptions_manage')}
             </a>
           )}

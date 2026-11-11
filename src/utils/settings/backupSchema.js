@@ -107,6 +107,8 @@ export function validateSettings(input) {
         : 1024 * 1024)
     )
       throw new Error(`The saved value for ${key} is too large.`);
+    if (key === 'subscriptionsLinkTarget' && !['_blank', '_self'].includes(value))
+      throw new Error('The saved subscription link target is not valid.');
     if (key === 'subscriptionsCurrency' && !validCurrency(value))
       throw new Error('The saved subscription currency is not valid.');
     if (['googleDriveMax', 'googleDriveRefresh'].includes(key) && !Number.isInteger(Number(value)))

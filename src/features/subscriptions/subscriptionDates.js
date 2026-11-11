@@ -1,5 +1,3 @@
-import { readNaturalDate } from '../google/naturalDates';
-
 export const localDay = (date = new Date()) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 export const validDay = (value) =>
@@ -12,15 +10,6 @@ export const dayDistance = (from, to) =>
 export const shiftDays = (day, days) =>
   new Date(Date.parse(`${day}T12:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
 export const cancelBy = (item) => shiftDays(item.nextDate, -item.noticeDays);
-
-export function parseSubscriptionDay(value, today = localDay()) {
-  const text = value.trim();
-  if (validDay(text)) return text;
-  const parsed = readNaturalDate(text, new Date(`${today}T12:00:00`), false);
-  return parsed && parsed.index === 0 && parsed.length === text.length
-    ? localDay(parsed.date)
-    : null;
-}
 
 /** Clamp each cycle against the original billing day, so January 31 returns to March 31. */
 export function advanceRenewal(item, today = localDay()) {

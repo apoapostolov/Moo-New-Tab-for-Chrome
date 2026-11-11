@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MdRefresh, MdSettings } from 'react-icons/md';
-import WidgetCard, { WidgetHeader } from 'components/Elements/WidgetCard/WidgetCard';
+import WidgetCard from 'components/Elements/WidgetCard/WidgetCard';
 import { useTranslationVersion } from 'contexts/TranslationContext';
 import { uiText } from 'lib/translations';
 import EventBus from 'utils/eventbus';
@@ -17,6 +16,9 @@ import {
   readRatesCache,
   REFRESH_MS,
 } from './portfolioStore';
+import PortfolioHeader from './PortfolioHeader';
+import Curve from './PortfolioCurve';
+import { readHistory, savePoint } from './portfolioHistory';
 import './portfolio.scss';
 
 const money = (amount, currency) =>
@@ -28,53 +30,6 @@ const openSettings = () => {
   updateHash('#settings/portfolio');
   EventBus.emit('modal', 'openMainModal');
 };
-
-function readHistory(stamp) {
-  try {
-    const stored = JSON.parse(localStorage.getItem('portfolioHistory') || 'null');
-    return stored?.stamp === stamp && Array.isArray(stored.points) ? stored.points : [];
-  } catch {
-    return [];
-  }
-}
-function savePoint(stamp, updated, value) {
-  const points = readHistory(stamp).filter(
-    (item) => Number.isFinite(item.value) && Number.isFinite(item.time),
-  );
-  if (!points.some((item) => item.time === updated)) points.push({ time: updated, value });
-  const trimmed = points.slice(-48);
-  localStorage.setItem('portfolioHistory', JSON.stringify({ stamp, points: trimmed }));
-  return trimmed;
-}
-function Curve({ points, change }) {
-  if (points.length < 2) return null;
-  const values = points.map((p) => p.value);
-  const low = Math.min(...values);
-  const span = Math.max(...values) - low || 1;
-  const positions = values.map((value, index) => [
-    (index / (values.length - 1)) * 300,
-    46 - ((value - low) / span) * 38,
-  ]);
-  let path = `M ${positions[0][0]} ${positions[0][1]}`;
-  for (let i = 1; i < positions.length - 1; i += 1) {
-    const [x, y] = positions[i];
-    const [nextX, nextY] = positions[i + 1];
-    path += ` Q ${x} ${y} ${(x + nextX) / 2} ${(y + nextY) / 2}`;
-  }
-  const [lastX, lastY] = positions[positions.length - 1];
-  path += ` L ${lastX} ${lastY}`;
-  return (
-    <svg
-      className={`portfolioCurve ${trendClass(change)}`}
-      viewBox="0 0 300 54"
-      preserveAspectRatio="none"
-      role="img"
-      aria-label={uiText('portfolio_recorded_history')}
-    >
-      <path d={path} />
-    </svg>
-  );
-}
 
 export default function Portfolio() {
   useTranslationVersion();
@@ -179,28 +134,10 @@ export default function Portfolio() {
       className="portfolioCard"
       aria-busy={state.status === 'loading' || state.status === 'refreshing'}
     >
-      <WidgetHeader>
-        <span className="portfolioLabel">{uiText('portfolio_title')}</span>
-        <span className="portfolioActions">
-          <button
-            type="button"
-            disabled={state.status === 'loading' || state.status === 'refreshing'}
-            onClick={() => load(true)}
-            aria-label={uiText('portfolio_refresh')}
-            title={uiText('portfolio_refresh')}
-          >
-            <MdRefresh />
-          </button>
-          <button
-            type="button"
-            onClick={openSettings}
-            aria-label={uiText('portfolio_settings')}
-            title={uiText('portfolio_settings')}
-          >
-            <MdSettings />
-          </button>
-        </span>
-      </WidgetHeader>
+      <PortfolioHeader
+        busy={state.status === 'loading' || state.status === 'refreshing'}
+        onRefresh={() => load(true)}
+      />
       {state.status === 'damaged' ? (
         <div className="portfolioHint">{uiText('portfolio_data_damaged')}</div>
       ) : state.status === 'empty' || state.status === 'key' ? (

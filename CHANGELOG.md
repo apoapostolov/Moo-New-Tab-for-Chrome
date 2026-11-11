@@ -11,9 +11,11 @@
 
 ### Changed
 
-- Subscriptions: use compact two-line rows with bare service logos, centered totals and an Active/Cancelled control that keeps the changed row available for undo until the view changes. Convert prices and totals to a display currency using daily reference rates while retaining original billing amounts.
+- Misc: optionally show a settings button on every widget. The option is off by default, including on Knowledge.
 
-- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action. The file scrollbar appears while scrolling or focused and fades out when idle.
+- Subscriptions: use compact two-line rows with bare service logos, centered totals and an Active/Cancelled control that keeps the changed row available for undo until the view changes. Convert prices and totals to a display currency using daily reference rates while retaining original billing amounts. Use a native renewal-date picker beside the cancellation notice, open linked entries in the current or a new tab, and preview notes on hover or keyboard focus.
+
+- Google widgets: choose Mail, Calendar, Tasks or Drive in a 2×2 Widget settings selector. Drive remembers its selected view, loads more files at the scroll boundary, and sizes its list to Files per page. Its header keeps Refresh as its only action by default. The file scrollbar appears while scrolling or focused and fades out when idle.
 
 ## 1.0.2 — 9 November 2026; updated 10 November 2026
 

@@ -1,12 +1,12 @@
 import { useId, useState } from 'react';
-import { MdRefresh, MdSettings } from 'react-icons/md';
+import { MdRefresh } from 'react-icons/md';
 import WidgetCard from 'components/Elements/WidgetCard/WidgetCard';
 import { Row, Content, Action } from 'components/Layout/Settings';
 import { Dropdown, Switch } from 'components/Form/Settings';
+import EventBus from 'utils/eventbus';
+import { openWidgetSettings } from './widgetSettings';
 import { uiText } from 'lib/translations';
 import { useTranslationVersion } from 'contexts/TranslationContext';
-import EventBus from 'utils/eventbus';
-import { updateHash } from 'utils/deepLinking';
 import 'features/google/google.scss';
 import 'scss/features.scss';
 import 'components/Form/Settings/Text/Text.scss';
@@ -15,10 +15,7 @@ import { WidgetTitleLink } from './WidgetTitleLink';
 
 export { WidgetTitleLink } from './WidgetTitleLink';
 
-export const openWidgetSettings = (widget) => {
-  updateHash(`#settings/${widget === 'drive' ? 'google' : widget}`);
-  EventBus.emit('modal', 'openMainModal');
-};
+export { openWidgetSettings } from './widgetSettings';
 
 export function IconButton({ label, children, ...props }) {
   return (
@@ -44,7 +41,6 @@ export function WidgetShell({
   error,
   updated,
   className = '',
-  showSettings = true,
   titleHref,
 }) {
   const { language } = useTranslationVersion();
@@ -64,11 +60,6 @@ export function WidgetShell({
         {onRefresh && (
           <IconButton label={uiText('widget_refresh')} onClick={onRefresh} disabled={loading}>
             <MdRefresh />
-          </IconButton>
-        )}
-        {showSettings && (
-          <IconButton label={uiText('widget_settings')} onClick={() => openWidgetSettings(widget)}>
-            <MdSettings />
           </IconButton>
         )}
       </header>

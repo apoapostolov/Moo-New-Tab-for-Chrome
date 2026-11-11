@@ -1,9 +1,10 @@
-import { MdAutorenew, MdUndo } from 'react-icons/md';
+import { MdAutorenew, MdUndo, MdEdit } from 'react-icons/md';
 import { uiText } from 'lib/translations';
 import ServiceLogo from './ServiceLogo';
 import { currencyDigits } from './subscriptionSchema';
 import { convertedSubscriptionPrice } from './subscriptionRates';
 import { cancelBy, dayDistance } from './subscriptionDates';
+import { subscriptionLinkProps } from './subscriptionLinks';
 import { renewSubscription } from './subscriptionActions';
 
 export default function SubscriptionRow({
@@ -15,7 +16,19 @@ export default function SubscriptionRow({
   pending,
   onStatus,
   fx,
+  preview,
+  noteId,
 }) {
+  const link = subscriptionLinkProps(item.url);
+  const description = preview.active?.id === item.id ? noteId : undefined;
+  const Identity = link ? 'div' : 'button';
+  const identityProps = link
+    ? {}
+    : {
+        type: 'button',
+        onClick: () => onEdit(item),
+        'aria-label': uiText('subscriptions_edit_name', { name: item.name }),
+      };
   const original = item.amount / 10 ** currencyDigits(item.currency);
   const converted = convertedSubscriptionPrice(item, fx);
   const currency = converted === null ? item.currency : fx.base;
@@ -36,34 +49,57 @@ export default function SubscriptionRow({
         : 'subscriptions_next_date',
   );
   return (
-    <article className="subscriptionRow">
-      <button
-        type="button"
-        className="subscriptionLogoEdit"
-        onClick={() => onEdit(item)}
-        aria-label={uiText('subscriptions_edit_name', { name: item.name })}
-      >
+    <article
+      className={`subscriptionRow${link ? ' subscriptionLinked' : ''}`}
+      onMouseEnter={(event) => {
+        if (item.notes.trim()) preview.open(item.id, event.currentTarget);
+        else preview.close();
+      }}
+      onMouseLeave={preview.leave}
+      onFocus={(event) => {
+        if (item.notes.trim()) preview.open(item.id, event.target);
+        else preview.close();
+      }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) preview.leave();
+      }}
+    >
+      {link && (
+        <a
+          className="subscriptionEntryLink"
+          {...link}
+          aria-label={uiText('subscriptions_manage_name', { name: item.name })}
+          aria-describedby={description}
+        />
+      )}
+      <Identity className="subscriptionLogoEdit" {...identityProps} aria-describedby={description}>
         <ServiceLogo service={item.service} name={item.name} />
-      </button>
-      <button
-        type="button"
-        className="subscriptionEdit"
-        onClick={() => onEdit(item)}
-        aria-label={uiText('subscriptions_edit_name', { name: item.name })}
-      >
+      </Identity>
+      <Identity className="subscriptionEdit" {...identityProps} aria-describedby={description}>
         <strong title={item.name}>{item.name}</strong>
         <span title={originalMoney}>
           {money} · {uiText(`subscriptions_${item.cycle}`)}
         </span>
-      </button>
+      </Identity>
       <div className="subscriptionAside">
-        <time
-          className="subscriptionRenewal"
-          dateTime={item.nextDate}
-          title={`${renewalLabel}: ${item.nextDate}`}
-        >
-          {formatDay(item.nextDate)}
-        </time>
+        <div className="subscriptionRenewalLine">
+          <time
+            className="subscriptionRenewal"
+            dateTime={item.nextDate}
+            title={`${renewalLabel}: ${item.nextDate}`}
+          >
+            {formatDay(item.nextDate)}
+          </time>
+          <button
+            type="button"
+            className="gwIconButton subscriptionEditAction"
+            title={uiText('subscriptions_edit')}
+            aria-label={uiText('subscriptions_edit_name', { name: item.name })}
+            onClick={() => onEdit(item)}
+          >
+            <MdEdit />
+          </button>
+        </div>
         <div className="subscriptionStatusLine">
           {item.status === 'cancelled' ? (
             <>

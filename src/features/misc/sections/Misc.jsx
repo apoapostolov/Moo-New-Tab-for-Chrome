@@ -15,6 +15,12 @@ const MiscOptions = () => {
 
       <Group>
         <Row>
+          <Content title={uiText('widget_settings_buttons')} />
+          <Action>
+            <Switch name="widgetSettingsButtons" category="other" stateText />
+          </Action>
+        </Row>
+        <Row>
           <Content
             title={uiText('bookmarks_open_links_in')}
             subtitle="Applies to Mail, Calendar, Tasks, GitHub and RSS widget titles."

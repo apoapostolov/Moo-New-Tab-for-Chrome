@@ -349,5 +349,7 @@
   "zoomDate",
   "zoomNavbar",
   "zoomQuicklinks",
-  "zoomWeather"
+  "zoomWeather",
+  "subscriptionsLinkTarget",
+  "widgetSettingsButtons"
 ]

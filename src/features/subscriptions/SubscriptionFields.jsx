@@ -83,36 +83,34 @@ export default function SubscriptionFields({ draft, set, when, setWhen, date, in
           </select>
         </label>
       </div>
-      <label>
-        {uiText(draft.status === 'trial' ? 'subscriptions_trial_end' : 'subscriptions_next_date')}
-        <input
-          name="subscriptionDate"
-          required
-          value={when}
-          maxLength={100}
-          placeholder="tomorrow, in 30 days, 2027-01-31"
-          aria-invalid={(invalid && !date) || undefined}
-          onChange={(e) => setWhen(e.target.value)}
-        />
-      </label>
-      {date && when !== date && (
-        <p className="subscriptionHint" aria-live="polite">
-          {date}
-        </p>
-      )}
-      <label>
-        {uiText('subscriptions_notice')}
-        <input
-          name="subscriptionNotice"
-          type="number"
-          required
-          min="0"
-          max="365"
-          step="1"
-          value={draft.noticeDays}
-          onChange={(e) => set('noticeDays', e.target.value)}
-        />
-      </label>
+      <div className="subscriptionFormPair subscriptionRenewalFields">
+        <label>
+          {uiText(draft.status === 'trial' ? 'subscriptions_trial_end' : 'subscriptions_next_date')}
+          <input
+            name="subscriptionDate"
+            type="date"
+            required
+            min="0001-01-01"
+            max="9999-12-31"
+            value={when}
+            aria-invalid={(invalid && !date) || undefined}
+            onChange={(event) => setWhen(event.target.value)}
+          />
+        </label>
+        <label>
+          {uiText('subscriptions_notice')}
+          <input
+            name="subscriptionNotice"
+            type="number"
+            required
+            min="0"
+            max="365"
+            step="1"
+            value={draft.noticeDays}
+            onChange={(event) => set('noticeDays', event.target.value)}
+          />
+        </label>
+      </div>
       <label>
         {uiText('subscriptions_url')}
         <input

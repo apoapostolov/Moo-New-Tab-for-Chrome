@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { WidgetShell, IconButton } from 'features/widgetKit/WidgetKit';
 import { useTranslationVersion } from 'contexts/TranslationContext';
@@ -10,12 +10,23 @@ import SubscriptionDialog from './SubscriptionDialog';
 import useSubscriptionRates from './useSubscriptionRates';
 import SubscriptionTotals from './SubscriptionTotals';
 import { cancelBy } from './subscriptionDates';
+import useItemPreview from 'features/widgetKit/useItemPreview';
+import SubscriptionNotes from './SubscriptionNotes';
 import './subscriptions.scss';
 
 export default function Subscriptions() {
   const { language } = useTranslationVersion();
   const locale = language.replaceAll('_', '-');
   const state = useSubscriptions();
+  const noteId = useId();
+  const preview = useItemPreview(
+    JSON.stringify(state.items.map((item) => [item.id, item.revision])),
+    '.subscriptionsWidget',
+    '.subscriptionRow',
+  );
+  const note =
+    preview.active &&
+    state.items.find((item) => item.id === preview.active.id && item.notes.trim());
   const fx = useSubscriptionRates(state.items, state.today);
   const [retained, setRetained] = useState([]);
   const [view, setView] = useState('upcoming');
@@ -92,6 +103,8 @@ export default function Subscriptions() {
                 pending={state.pending}
                 onStatus={onStatus}
                 fx={fx}
+                preview={preview}
+                noteId={noteId}
               />
             ))}
           </div>
@@ -102,6 +115,7 @@ export default function Subscriptions() {
           )}
         </>
       )}
+      {note && <SubscriptionNotes key={note.id} item={note} preview={preview} id={noteId} />}
       {editing && (
         <SubscriptionDialog
           key={editing.item?.id || 'new'}

@@ -1,5 +1,5 @@
 import { useTranslationVersion } from 'contexts/TranslationContext';
-import { useState, useEffect, Fragment, Suspense, lazy } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 
 import Clock from '../../time/Clock';
 import QuickLinks from '../../quicklinks/QuickLinks';
@@ -19,6 +19,7 @@ import {
 } from 'utils/widgets';
 
 import EventBus from 'utils/eventbus';
+import WidgetSettingsShortcut from 'features/widgetKit/WidgetSettingsShortcut';
 import useFocusWorkspace from 'features/focus/useFocusWorkspace';
 import useCompactLayout from 'utils/useCompactLayout';
 
@@ -109,7 +110,15 @@ const Widgets = () => {
 
       if (!widget) return null;
 
-      return <Fragment key={id}>{widget}</Fragment>;
+      return (
+        <WidgetSettingsShortcut
+          key={id}
+          widget={id}
+          enabled={localStorage.getItem('widgetSettingsButtons') === 'true'}
+        >
+          {widget}
+        </WidgetSettingsShortcut>
+      );
     });
 
   // A widget that is switched off is not on the page, so it cannot be half of a pair. The

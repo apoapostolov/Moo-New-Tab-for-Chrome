@@ -29,6 +29,15 @@ export default function SubscriptionOptions() {
           hint={uiText('subscriptions_currency_hint')}
           items={Intl.supportedValuesOf('currency').map((value) => ({ value, text: value }))}
         />
+        <OptionSelect
+          category="subscriptions"
+          name="subscriptionsLinkTarget"
+          title={uiText('subscriptions_link_target')}
+          items={[
+            { value: '_blank', text: uiText('subscriptions_link_new_tab') },
+            { value: '_self', text: uiText('subscriptions_link_same_tab') },
+          ]}
+        />
         <OptionToggle
           category="subscriptions"
           name="subscriptionsRemoteIcons"

@@ -1,5 +1,7 @@
 import { assert, test, server, importSettings } from './regression-fixture.mjs';
 
+const shortcuts = await server.ssrLoadModule('/src/features/widgetKit/widgetSettings.js');
+const links = await server.ssrLoadModule('/src/features/subscriptions/subscriptionLinks.js');
 const dates = await server.ssrLoadModule('/src/features/subscriptions/subscriptionDates.js');
 const schema = await server.ssrLoadModule('/src/features/subscriptions/subscriptionSchema.js');
 const actions = await server.ssrLoadModule('/src/features/subscriptions/subscriptionActions.js');
@@ -55,16 +57,10 @@ test('subscription billing cycles keep original month-end and leap-day anchors',
   assert.equal(dates.advanceRenewal(jan, '2030-03-30'), '2030-03-31');
 });
 
-test('subscription dates understand human phrases and reject partial, impossible or competing dates', () => {
-  for (const [value, expected] of [
-    ['today', '2026-11-10'],
-    ['tomorrow', '2026-11-11'],
-    ['in 3 days', '2026-11-13'],
-    ['2028-02-29', '2028-02-29'],
-  ])
-    assert.equal(dates.parseSubscriptionDay(value, '2026-11-10'), expected);
-  for (const value of ['', 'later', '2027-02-29', 'tomorrow or Friday', 'in 2.5 days'])
-    assert.equal(dates.parseSubscriptionDay(value, '2026-11-10'), null);
+test('subscription dates validate native calendar values and cancellation deadlines', () => {
+  assert.equal(dates.validDay('2028-02-29'), true);
+  for (const value of ['', '2027-02-29', 'tomorrow', '2027-13-01'])
+    assert.equal(dates.validDay(value), false);
   assert.equal(dates.cancelBy(item('x')), '2027-01-28');
   assert.equal(dates.dayDistance('2027-03-27', '2027-03-29'), 2);
 });
@@ -212,4 +208,27 @@ test('service logo library finds brands, uses bundled artwork offline and never 
       .startsWith('https://raw.githubusercontent.com/homarr-labs/dashboard-icons/'),
   );
   assert.equal(logos.serviceLogo('../unknown', true), '');
+});
+
+test('subscription management links use safe URLs and the chosen tab target', () => {
+  assert.equal(links.subscriptionLinkProps('javascript:alert(1)'), null);
+  assert.equal(links.subscriptionLinkProps(''), null);
+  assert.equal(links.subscriptionLinkProps('https://example.com/').target, '_blank');
+  localStorage.setItem('subscriptionsLinkTarget', '_self');
+  assert.equal(links.subscriptionLinkProps('https://example.com/').target, '_self');
+  assert.equal(links.subscriptionLinkProps('https://example.com/').rel, undefined);
+  localStorage.setItem('subscriptionsLinkTarget', 'invalid');
+  assert.equal(links.readSubscriptionLinkTarget(), '_blank');
+  assert.throws(() => validateSettings({ subscriptionsLinkTarget: 'invalid' }), /link target/);
+});
+
+test('widget settings shortcuts map shared widgets to their settings sections', () => {
+  assert.equal(shortcuts.widgetSettingsPath('knowledge'), '#settings/knowledge');
+  assert.equal(shortcuts.widgetSettingsPath('drive'), '#settings/google');
+  assert.equal(shortcuts.widgetSettingsPath('date'), '#settings/time');
+  assert.equal(shortcuts.widgetSettingsPath('photoinfo'), '#settings/background');
+  assert.equal(shortcuts.widgetSettingsPath('countdown'), '#settings/floats');
+  assert.doesNotThrow(() =>
+    validateSettings({ widgetSettingsButtons: true, subscriptionsLinkTarget: '_self' }),
+  );
 });

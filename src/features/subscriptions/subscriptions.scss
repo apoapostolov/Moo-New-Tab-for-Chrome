@@ -225,3 +225,108 @@
     border-color: currentcolor;
   }
 }
+
+.subscriptionRow {
+  position: relative;
+}
+
+.subscriptionEntryLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 6px;
+
+  &:focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: -2px;
+  }
+}
+
+.subscriptionStatusLine button,
+.subscriptionStatusLine select,
+.subscriptionEditAction {
+  position: relative;
+  z-index: 2;
+}
+
+.subscriptionRenewalLine {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  height: 20px;
+
+  .subscriptionEditAction {
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    min-height: 20px;
+    padding: 2px;
+  }
+}
+
+.subscriptionRenewalFields {
+  label {
+    justify-content: space-between;
+  }
+
+  input {
+    min-width: 0;
+    height: 38px;
+  }
+
+  input[type='date'] {
+    color-scheme: dark;
+  }
+}
+
+.light .subscriptionRenewalFields input[type='date'] {
+  color-scheme: light;
+}
+
+.subscriptionNotesPreview {
+  @extend %readerSurface;
+
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
+  overflow: auto;
+  overflow-wrap: anywhere;
+  text-align: left;
+  font-size: 12px;
+
+  &:not(:popover-open, [open]) {
+    display: none;
+  }
+
+  strong {
+    display: block;
+  }
+
+  p {
+    white-space: pre-wrap;
+    margin: 8px 0 0;
+    line-height: 1.5;
+  }
+}
+
+.subscriptionNotesLabel {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.subscriptionRenewalFields input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  filter: brightness(0) invert(1);
+  cursor: pointer;
+}
+
+.light .subscriptionRenewalFields input[type='date']::-webkit-calendar-picker-indicator {
+  filter: brightness(0);
+}

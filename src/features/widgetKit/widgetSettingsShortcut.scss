@@ -1,0 +1,40 @@
+[data-widget-marker] {
+  display: none !important;
+}
+
+.widgetSettingsShortcut {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  margin-left: 4px;
+}
+
+.widgetSettingsHost {
+  position: relative;
+  padding-inline-end: 32px;
+}
+
+.widgetSettingsHost > .widgetSettingsShortcut {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 3;
+}
+
+.widgetSettingsShortcut svg {
+  width: 16px;
+  height: 16px;
+}
+
+.widgetSettingsShortcut:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
