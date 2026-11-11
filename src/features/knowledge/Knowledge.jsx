@@ -56,6 +56,18 @@ export default function Knowledge() {
       title={uiText('knowledge_title')}
       className="knowledgeWidget"
       loading={state.loading}
+      actions={
+        article ? (
+          <div className="knowledgeEyebrow">
+            <span>{article.source === 'commons' ? 'Wikimedia Commons' : 'Wikipedia'}</span>
+            {article.subject && (
+              <span className="knowledgeSubject" title={article.subject}>
+                {article.subject}
+              </span>
+            )}
+          </div>
+        ) : null
+      }
       onRefresh={state.refresh}
       error={state.error ? uiText(`knowledge_error_${code}`) : null}
     >
@@ -65,14 +77,6 @@ export default function Knowledge() {
         </p>
       ) : (
         <>
-          <div className="knowledgeEyebrow">
-            <span>{article.source === 'commons' ? 'Wikimedia Commons' : 'Wikipedia'}</span>
-            {article.subject && (
-              <span className="knowledgeSubject" title={article.subject}>
-                {article.subject}
-              </span>
-            )}
-          </div>
           <h3 className="knowledgeTitle">
             <a href={article.url} target="_blank" rel="noopener noreferrer">
               {article.title}

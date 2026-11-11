@@ -4,7 +4,7 @@
 
 ### Added
 
-- Knowledge: discover Wikipedia articles or Wikimedia Commons images, filter by comma-separated subjects, and choose a new page per reload, per local day or every 1–168 hours. Includes thumbnails, source and image credits, offline cached text and Classic/Glass styling.
+- Knowledge: discover Wikipedia articles or Wikimedia Commons images, filter by comma-separated subjects, and choose a new page per reload, per local day or every 1–168 hours. Includes thumbnails, source and subject in a compact two-line header, image credits, offline cached text and Classic/Glass styling.
 
 - Google Drive: reopen recent, starred and shared files, search file names and browse folders with read-only metadata access. Configure it in Settings → Google; existing accounts reconnect to approve Drive access.
 - Subscriptions: track renewals, trials, cancellation deadlines and costs by currency, with local storage, Backups and a searchable service-logo catalogue.
