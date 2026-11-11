@@ -1,20 +1,14 @@
 # Moo changelog
 
-## Unreleased
+## 1.0.4 — 12 November 2026 (prerelease)
 
 ### Added
 
-- Widget layout: choose one or two columns for the central card widgets with a compact switch beside the Overview separator. Standard and Focus layouts remember their choices independently.
+- Widget layout: choose one or two columns for the central card widgets with a compact switch beside the Overview separator. Visible cards balance across the selected columns; the clock, date and Search/Ask Bar stay full width. Standard and Focus layouts remember their choices independently, and manual arrangement remains available.
 
 ### Fixed
 
-- Widget layout: upper-left widgets start at the top margin independently of the upper-right navbar and widget stack.
-
-## 1.0.4 — 12 November 2026 (prerelease)
-
-### Fixed
-
-- Widget layout: upper-left and upper-right stacks grow naturally instead of being limited to half the viewport and forcing a rail scrollbar. Widget lists retain their own scrolling behavior.
+- Widget layout: upper-left and upper-right stacks grow naturally instead of being limited to half the viewport and forcing a rail scrollbar. Upper-left widgets start at the top margin independently of the upper-right navbar and widget stack. Widget lists retain their own scrolling behavior.
 - Widget layout: quick mouse drops in Overview use the final pointer position, including settings-panel scrolling. Planning, Subscriptions and other widgets can move between corners without snapping back to an earlier preview target. Cancelled drags preserve placement, and Standard and Focus layouts stay independent.
 
 ## 1.0.3 — 11 November 2026
