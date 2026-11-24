@@ -1,0 +1,63 @@
+name: Feature request
+description: Suggest a widget, a layout change, or an improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem first, then the change you want. A request that names the
+        routine it improves is easier to act on than a list of settings.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve
+      description: The moment that feels wrong today, and how often it happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you have tried instead
+      description: An existing layout, a setting, or another extension.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Widgets
+        - Layouts
+        - Appearance and backgrounds
+        - Feeds and integrations
+        - Settings and backup
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: design
+    attributes:
+      label: Screenshots or designs
+      description: Drop an image in if the idea is easier to show than to describe.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for this request
+          required: true
