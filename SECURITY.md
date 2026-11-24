@@ -54,7 +54,8 @@ real profile.
 
 - vulnerabilities in the browser itself. Report those to the Chrome team
 - third-party sites whose feeds or images Moo displays
-- a build loaded temporarily from disk in developer mode
+- an unofficial build, meaning anything other than the published release
+  file, however it was installed
 - reports that need an already compromised browser profile or another malicious
   extension
 - missing hardening with no demonstrated impact
